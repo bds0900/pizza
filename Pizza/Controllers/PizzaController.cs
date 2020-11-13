@@ -3,17 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.CodeAnalysis;
-using System.Collections.Specialized;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Pizza.Controllers
 {
@@ -49,6 +43,7 @@ namespace Pizza.Controllers
 
         // GET: api/Pizza/Customers/5/Orders
         [HttpGet("Customers/{id}/Orders", Name = "GetOrderIds")]
+        [Authorize]
         public JsonResult GetOrderIds(Guid id)
         {
             var pizzaquery = _context.Orders.Where(o => o.Customer.CustomerId == id).Select(o => o.OrderId);
@@ -120,41 +115,55 @@ namespace Pizza.Controllers
 
         // POST: api/Pizza
         [HttpPost]
-        public Order Post([FromBody] InputModel value)
+        public async Task<IActionResult> Post([FromBody] InputModel value)
         {
-            var customer=_context.Customers.Find(value.Customer.CustomerId);
+            var customer = _context.Customers.Find(value.Customer.CustomerId);
 
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             Order newOrder = null;
-
-            if(customer==null)
+            try
             {
-                newOrder = new Order { Customer = value.Customer };
-            }
-            else
-            {
-                newOrder = new Order { Customer = customer };
-            }
-
-            foreach (var pizza in value.Pizza)
-            {
-                //피자 생성
-                Pizza newPizza = new Pizza { Order = newOrder, TypeId = pizza.TypeId, SizeId = pizza.SizeId };
-                //피자에 토핑연결
-                foreach (var topping in pizza.Toppings)
+               
+                if (customer == null)
                 {
-                    PizzaTopping pizzaTopping = new PizzaTopping { Pizza = newPizza, ToppingId = topping };
-                    _context.PizzaToppings.Add(pizzaTopping);
+                    newOrder = new Order { Customer = value.Customer };
                 }
+                else
+                {
+                    newOrder = new Order { Customer = customer };
+                }
+
+                foreach (var pizza in value.Pizza)
+                {
+                    //피자 생성
+                    Pizza newPizza = new Pizza { Order = newOrder, TypeId = pizza.TypeId, SizeId = pizza.SizeId };
+                    //피자에 토핑연결
+                    foreach (var topping in pizza.Toppings)
+                    {
+                        PizzaTopping pizzaTopping = new PizzaTopping { Pizza = newPizza, ToppingId = topping };
+                        await _context.PizzaToppings.AddAsync(pizzaTopping);
+                    }
+                }
+
+                //진행상황
+                OrderProcess newOrderProcess = new OrderProcess { Order = newOrder, ProcessId = 1 };
+                var ret = await _context.OrderProcess.AddAsync(newOrderProcess);
+                await _context.SaveChangesAsync();
+
+                Task.Run(() => PizzaMakingTask(newOrder.OrderId));
+
+                await transaction.CommitAsync();
+            }
+            catch(DbUpdateException updateEx)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
             }
 
-            //진행상황
-            OrderProcess newOrderProcess = new OrderProcess { Order = newOrder, ProcessId = 1 };
-            var ret = _context.OrderProcess.Add(newOrderProcess);
-            _context.SaveChanges();
-
-            Task.Run( ()=>PizzaMakingTask(newOrder.OrderId));
-
-            return newOrder;
+            return new JsonResult(newOrder);
         }
 
 
