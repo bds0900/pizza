@@ -1,6 +1,7 @@
 ﻿using System;
 using BasicPizza;
 using Cheese;
+
 namespace PizzaMachine
 {
     class Program
@@ -8,19 +9,11 @@ namespace PizzaMachine
         static void Main(string[] args)
         {
             PizzaMaker pizzamaker = new PizzaMaker();
-            Pizza pizza = new CheesePizza("Cheese");
-            pizza.AddToppings(new string[]{ "Red Onions", "Hot Sausage", "Salami" });
+            Pizza pizza = new Pizza();
+            pizzamaker.AddTopping(new string[] { "cheese","beef"});
             pizzamaker.SetPizza(pizza);
             pizzamaker.MakePizza();
-
-            Pizza pizza1 = new DefaultPizza("Default");
-            pizzamaker.SetPizza(pizza1);
-            pizzamaker.MakePizza();
-
-
-
-
-
+            
         }
     }
 }

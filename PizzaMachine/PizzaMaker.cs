@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using BasicPizza;
+//using BasicPizza;
 namespace PizzaMachine
 {
     public class PizzaMaker
     {
         private Pizza pizza;
+        private List<Topping> toppings;
         public void MakePizza()
         {
             PreHeatOven();
@@ -23,6 +24,10 @@ namespace PizzaMachine
         {
             this.pizza = pizza;
         }
+        public void AddTopping(string[] toppings)
+        {
+
+        }
 
         // These operations already have implementations.
         protected void PreHeatOven()
@@ -37,7 +42,9 @@ namespace PizzaMachine
 
         protected void BasicTopping()
         {
-            pizza.BasicTopping();
+            //Add basic Toppings 
+            Console.WriteLine("PizzaTemplate says: Add Tomato");
+            Console.WriteLine("PizzaTemplate says: Add Cheese");
         }
 
         protected void BakeThePizza()
@@ -54,15 +61,10 @@ namespace PizzaMachine
         }
         protected virtual void TopThePizza()
         {
-            if (pizza.GetToppings() != null)
-            {
-
-                foreach (var topping in pizza.GetToppings())
-                {
-                    Console.WriteLine("Add topping :{0}", topping);
-                }
-            }
+            //additional toppings
+            Console.WriteLine("Add topping ");
         }
+
 
 
 

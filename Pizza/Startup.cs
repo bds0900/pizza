@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,12 +26,21 @@ namespace Pizza
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                              options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                     );
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", config =>
                 {
                     config.Authority = "https://localhost:44301";
                     config.Audience = "ApiOne";
                 });
+            services.AddDbContext<PizzaDbContext>(config =>
+            {
+                config.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(Startup).Assembly.FullName));
+            });
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -68,7 +78,7 @@ namespace Pizza
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
