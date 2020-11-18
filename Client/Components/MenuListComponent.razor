@@ -1,0 +1,30 @@
+﻿@using Client.Models
+
+@if (PizzaInfo != null)
+{
+    <div class="container">
+        <div class="row">
+
+            @foreach (var type in PizzaInfo.Type)
+            {
+                <div class="card-deck">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top " src="@type.Image" alt="Card image cap" width="400" height="400">
+                        <div class="card-body">
+                            <h5 class="card-title">@type.TypeName</h5>
+                            <p class="card-text">@type.Description</p>
+                            <a href="/menu/@type.TypeName" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter]
+    public PizzaInfo PizzaInfo { get; set; }
+}
