@@ -1,4 +1,5 @@
-﻿using Pizza.Controllers;
+﻿using Entities;
+using Pizza.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

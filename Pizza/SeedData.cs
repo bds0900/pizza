@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -47,10 +48,23 @@ namespace Pizza
                 new Size{SizeName="Large",SizePrice=6.99f},
             });
 
-            context.Types.AddRange(new Type[]
+            context.Types.AddRange(new Entities.Type[]
             {
-                new Type{TypeName="Normal Pizza"},
-                new Type{TypeName="Cheese Pizza"},
+                new Entities.Type{
+                    TypeName="Custom",
+                    Description="choose your favorite topping ",
+                    Image="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                },
+                new Entities.Type{
+                    TypeName="Cheese",
+                    Description="For cheese lover",
+                    Image="https://thumbs.dreamstime.com/z/woman-taking-slice-hot-cheese-pizza-margherita-table-closeup-138142081.jpg"
+                },
+                new Entities.Type{
+                    TypeName="Pepperoni",
+                    Description="my favorite",
+                    Image="https://thumbs.dreamstime.com/z/sliced-pepperoni-pizza-slice-being-lifted-board-43268133.jpg"
+                },
             });
 
             context.Customers.AddRange(new Customer[]{

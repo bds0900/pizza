@@ -70,7 +70,8 @@ namespace Pizza.Migrations
                     TypeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TypeName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(nullable: true),
+                    Image = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

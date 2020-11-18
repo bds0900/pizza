@@ -19,7 +19,7 @@ namespace Pizza.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Pizza.Customer", b =>
+            modelBuilder.Entity("Entities.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace Pizza.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("Pizza.Order", b =>
+            modelBuilder.Entity("Entities.Order", b =>
                 {
                     b.Property<Guid>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace Pizza.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Pizza.OrderProcess", b =>
+            modelBuilder.Entity("Entities.OrderProcess", b =>
                 {
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
@@ -80,7 +80,7 @@ namespace Pizza.Migrations
                     b.ToTable("OrderProcess");
                 });
 
-            modelBuilder.Entity("Pizza.Pizza", b =>
+            modelBuilder.Entity("Entities.Pizza", b =>
                 {
                     b.Property<Guid>("PizzaId")
                         .ValueGeneratedOnAdd()
@@ -107,7 +107,7 @@ namespace Pizza.Migrations
                     b.ToTable("Pizzas");
                 });
 
-            modelBuilder.Entity("Pizza.PizzaTopping", b =>
+            modelBuilder.Entity("Entities.PizzaTopping", b =>
                 {
                     b.Property<Guid>("PizzaId")
                         .HasColumnType("uniqueidentifier");
@@ -122,7 +122,7 @@ namespace Pizza.Migrations
                     b.ToTable("PizzaToppings");
                 });
 
-            modelBuilder.Entity("Pizza.Process", b =>
+            modelBuilder.Entity("Entities.Process", b =>
                 {
                     b.Property<int>("ProcessId")
                         .ValueGeneratedOnAdd()
@@ -137,7 +137,7 @@ namespace Pizza.Migrations
                     b.ToTable("Processes");
                 });
 
-            modelBuilder.Entity("Pizza.Size", b =>
+            modelBuilder.Entity("Entities.Size", b =>
                 {
                     b.Property<int>("SizeId")
                         .ValueGeneratedOnAdd()
@@ -155,7 +155,7 @@ namespace Pizza.Migrations
                     b.ToTable("Sizes");
                 });
 
-            modelBuilder.Entity("Pizza.Topping", b =>
+            modelBuilder.Entity("Entities.Topping", b =>
                 {
                     b.Property<int>("ToppingId")
                         .ValueGeneratedOnAdd()
@@ -173,7 +173,7 @@ namespace Pizza.Migrations
                     b.ToTable("Toppings");
                 });
 
-            modelBuilder.Entity("Pizza.Type", b =>
+            modelBuilder.Entity("Entities.Type", b =>
                 {
                     b.Property<int>("TypeId")
                         .ValueGeneratedOnAdd()
@@ -181,6 +181,9 @@ namespace Pizza.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TypeName")
@@ -191,60 +194,60 @@ namespace Pizza.Migrations
                     b.ToTable("Types");
                 });
 
-            modelBuilder.Entity("Pizza.Order", b =>
+            modelBuilder.Entity("Entities.Order", b =>
                 {
-                    b.HasOne("Pizza.Customer", "Customer")
+                    b.HasOne("Entities.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pizza.OrderProcess", b =>
+            modelBuilder.Entity("Entities.OrderProcess", b =>
                 {
-                    b.HasOne("Pizza.Order", "Order")
+                    b.HasOne("Entities.Order", "Order")
                         .WithMany("OrderProcesses")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pizza.Process", "Process")
+                    b.HasOne("Entities.Process", "Process")
                         .WithMany("OrderProcesses")
                         .HasForeignKey("ProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pizza.Pizza", b =>
+            modelBuilder.Entity("Entities.Pizza", b =>
                 {
-                    b.HasOne("Pizza.Order", "Order")
+                    b.HasOne("Entities.Order", "Order")
                         .WithMany("Pizzas")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pizza.Size", "Size")
+                    b.HasOne("Entities.Size", "Size")
                         .WithMany("Pizzas")
                         .HasForeignKey("SizeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pizza.Type", "Type")
+                    b.HasOne("Entities.Type", "Type")
                         .WithMany("Pizzas")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pizza.PizzaTopping", b =>
+            modelBuilder.Entity("Entities.PizzaTopping", b =>
                 {
-                    b.HasOne("Pizza.Pizza", "Pizza")
+                    b.HasOne("Entities.Pizza", "Pizza")
                         .WithMany("PizzaToppings")
                         .HasForeignKey("PizzaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pizza.Topping", "Topping")
+                    b.HasOne("Entities.Topping", "Topping")
                         .WithMany("PizzaToppings")
                         .HasForeignKey("ToppingId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.Web.CodeGeneration;
-
+using Entities;
 namespace Pizza
 {
     public class PizzaDbContext : DbContext
     {
-        public DbSet<Pizza> Pizzas { get; set; }
+        public DbSet<Entities.Pizza> Pizzas { get; set; }
         public DbSet<Size> Sizes { get; set; }
-        public DbSet<Type> Types { get; set; }
+        public DbSet<Entities.Type> Types { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Process> Processes { get; set; }
         public DbSet<Topping> Toppings { get; set; }
@@ -47,17 +47,17 @@ namespace Pizza
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<Pizza>()
+            modelBuilder.Entity<Entities.Pizza>()
                 .HasKey(b => b.PizzaId);
 
             modelBuilder.Entity<Size>()
                 .HasKey(b => b.SizeId);
 
-            modelBuilder.Entity<Type>()
+            modelBuilder.Entity<Entities.Type>()
                 .HasKey(b => b.TypeId);
             
 
-            modelBuilder.Entity<Pizza>()
+            modelBuilder.Entity<Entities.Pizza>()
                 .Property(b => b.PizzaId)
                 //.ValueGeneratedOnAdd();
                 .HasDefaultValueSql("NEWID()");
@@ -72,7 +72,7 @@ namespace Pizza
                 .ValueGeneratedOnAdd();
                 //.HasDefaultValueSql("NEWID()");
 
-            modelBuilder.Entity<Type>()
+            modelBuilder.Entity<Entities.Type>()
                 .Property(b => b.TypeId)
                 .ValueGeneratedOnAdd();
                 //.HasDefaultValueSql("NEWID()");
@@ -99,19 +99,19 @@ namespace Pizza
                 .WithOne(b=>b.Type)
                 .HasForeignKey(p => p.PizzaId);*/
             ////////////////////////////////////////
-            modelBuilder.Entity<Pizza>()
+            modelBuilder.Entity<Entities.Pizza>()
                 .HasOne(p => p.Size)
                 .WithMany(p => p.Pizzas)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(p => p.SizeId);
 
-            modelBuilder.Entity<Pizza>()
+            modelBuilder.Entity<Entities.Pizza>()
                 .HasOne(p => p.Type)
                 .WithMany(p => p.Pizzas)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(p => p.TypeId);
 
-            modelBuilder.Entity<Pizza>()
+            modelBuilder.Entity<Entities.Pizza>()
                 .HasOne(p => p.Order)
                 .WithMany(p => p.Pizzas)
                 .OnDelete(DeleteBehavior.Cascade)
@@ -188,119 +188,7 @@ namespace Pizza
     }
 
 
-    public class Pizza
-    {
-        public Guid PizzaId { get; set; }
-
-        public int TypeId { get; set; }
-        public Type Type { get; set; }
-
-        public int SizeId { get; set; }
-        public Size Size { get; set; }
-
-        public List<PizzaTopping> PizzaToppings { get; set; }
-
-        public Guid OrderId { get; set; }
-        public Order Order { get; set; }
-    }
-
-
-    //options
-    public class Type
-    {
-        public int TypeId { get; set; }
-        public string TypeName { get; set; }
-        public string Description { get; set; }
-
-
-
-        public List<Pizza> Pizzas { get; set; }
-    }
-
-
-    public class Size
-    {
-        public int SizeId { get; set; }
-        public string SizeName { get; set; }
-        public float SizePrice { get; set; }
-
-
-        public List<Pizza> Pizzas { get; set; }
-    }
-
-
-
-
-    public class Customer
-    {
-        public Guid CustomerId { get; set; }
-        
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
-        [EmailAddress]
-        public string Email { get; set; }
-        [Phone]
-        public string PhoneNumber { get; set; }
-
-        public List<Order> Orders { get; set; }
-
-
-    }
-    
-    public class Order
-    {
-        public Guid OrderId { get; set; }
-
-        public DateTime Created { get; set; }
-
-        public Guid CustomerId { get; set; }
-        public Customer Customer { get; set; }
-
-        public List<Pizza> Pizzas { get; set; }
-        public List<OrderProcess> OrderProcesses { get; set; }
-    }
-
-
-    public class Process
-    {
-        public int ProcessId { get; set; }
-        public string Status { get; set; }
-        public List<OrderProcess> OrderProcesses { get; set; }
-    }
-
-    public class OrderProcess
-    {
-        public Guid OrderId { get; set; }
-        public Order Order { get; set; }
-
-        public int ProcessId { get; set; }
-        public Process Process { get; set; }
-    }
-
-
-
-    public  class Topping
-    {
-        public int ToppingId { get; set; }
-        public string ToppingName { get; set; }
-        public float ToppingPrice { get; set; }
-
-        public List<PizzaTopping> PizzaToppings { get; set; }
-    }
-
-
-
-    public class PizzaTopping
-    {
-        public Guid PizzaId { get; set; }
-        public Pizza Pizza { get; set; }
-
-
-        public int ToppingId { get; set; }
-        public Topping Topping { get; set; }
-    }
- 
+     
 
 
 }

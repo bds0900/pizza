@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Entities;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +15,7 @@ namespace Pizza
     }
     public class PizzaMaker
     {
-        private Pizza pizza;
+        private Entities.Pizza pizza;
         private List<Topping> toppings;
         private PizzaDbContext _context;
         private DoorStatus doorStatus;
@@ -59,7 +60,7 @@ namespace Pizza
 
         }
 
-        public void SetPizza(Pizza pizza)
+        public void SetPizza(Entities.Pizza pizza)
         {
             this.pizza = pizza;
         }

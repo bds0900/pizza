@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.AspNetCore.Authorization;
+using Entities;
 
 namespace Pizza.Controllers
 {
@@ -28,6 +29,30 @@ namespace Pizza.Controllers
             _context = context;
             _pizzaMaker = new PizzaMaker();
         }
+        [HttpGet("topping")]
+        public ActionResult Topping()
+        {
+            return new JsonResult(new
+            {
+                Topping = _context.Toppings.Select(o => new { o.ToppingId, o.ToppingName, o.ToppingPrice })
+            });
+        }
+        [HttpGet("type")]
+        public ActionResult Type()
+        {
+            return new JsonResult(new
+            {
+                Type = _context.Types.Select(o => new { o.TypeId, o.TypeName, o.Image, o.Description }),
+              });
+        }
+        [HttpGet("size")]
+        public ActionResult Size()
+        {
+            return new JsonResult(new
+            {
+                Size = _context.Sizes.Select(o => new { o.SizeId, o.SizeName, o.SizePrice }),
+            });
+        }
         // GET: api/Pizza
         [HttpGet]
         //[Authorize]
@@ -35,9 +60,9 @@ namespace Pizza.Controllers
         {
             return new JsonResult(new
             {
-                Size = _context.Sizes.Select(o=>new { o.SizeId,o.SizeName,o.SizePrice}),
-                Type = _context.Types.Select(o=>new { o.TypeId,o.TypeName}),
-                Topping = _context.Toppings.Select(o => new{ o.ToppingId,o.ToppingName,o.ToppingPrice})
+                Size = _context.Sizes.Select(o => new { o.SizeId, o.SizeName, o.SizePrice }),
+                Type = _context.Types.Select(o => new { o.TypeId, o.TypeName, o.Image, o.Description }),
+                Topping = _context.Toppings.Select(o => new { o.ToppingId, o.ToppingName, o.ToppingPrice })
             });
         }
 
@@ -136,7 +161,7 @@ namespace Pizza.Controllers
                 foreach (var pizza in value.Pizza)
                 {
                     //피자 생성
-                    Pizza newPizza = new Pizza { Order = newOrder, TypeId = pizza.TypeId, SizeId = pizza.SizeId };
+                    Entities.Pizza newPizza = new Entities.Pizza { Order = newOrder, TypeId = pizza.TypeId, SizeId = pizza.SizeId };
                     //피자에 토핑연결
                     foreach (var topping in pizza.Toppings)
                     {
@@ -165,8 +190,6 @@ namespace Pizza.Controllers
 
             return new JsonResult(newOrder);
         }
-
-
 
         // PUT: api/Pizza/5
         [HttpPut("{id}")]
