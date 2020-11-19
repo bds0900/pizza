@@ -30,28 +30,24 @@ namespace Pizza.Controllers
             _pizzaMaker = new PizzaMaker();
         }
         [HttpGet("topping")]
-        public ActionResult Topping()
+        public IEnumerable<Topping> Topping()
         {
-            return new JsonResult(new
-            {
-                Topping = _context.Toppings.Select(o => new { o.ToppingId, o.ToppingName, o.ToppingPrice })
-            });
+            return _context.Toppings.ToList();
         }
         [HttpGet("type")]
-        public ActionResult Type()
+        public IEnumerable<Entities.Type> Type()
         {
-            return new JsonResult(new
-            {
-                Type = _context.Types.Select(o => new { o.TypeId, o.TypeName, o.Image, o.Description }),
-              });
+            return _context.Types.ToList();
         }
         [HttpGet("size")]
-        public ActionResult Size()
+        public IEnumerable<Size> Size()
         {
-            return new JsonResult(new
-            {
-                Size = _context.Sizes.Select(o => new { o.SizeId, o.SizeName, o.SizePrice }),
-            });
+            return _context.Sizes.ToList();
+        }
+        [HttpGet("sides")]
+        public IEnumerable<Side> Sides()
+        {
+            return _context.Sides.ToList();
         }
         // GET: api/Pizza
         [HttpGet]

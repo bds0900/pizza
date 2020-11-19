@@ -36,6 +36,22 @@ namespace Pizza.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sides",
+                columns: table => new
+                {
+                    SideId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SideName = table.Column<string>(nullable: true),
+                    SidePrice = table.Column<float>(nullable: false),
+                    Image = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sides", x => x.SideId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sizes",
                 columns: table => new
                 {
@@ -154,6 +170,30 @@ namespace Pizza.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SideOrder",
+                columns: table => new
+                {
+                    SideId = table.Column<int>(nullable: false),
+                    OrderId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SideOrder", x => new { x.OrderId, x.SideId });
+                    table.ForeignKey(
+                        name: "FK_SideOrder_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SideOrder_Sides_SideId",
+                        column: x => x.SideId,
+                        principalTable: "Sides",
+                        principalColumn: "SideId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PizzaToppings",
                 columns: table => new
                 {
@@ -206,6 +246,11 @@ namespace Pizza.Migrations
                 name: "IX_PizzaToppings_ToppingId",
                 table: "PizzaToppings",
                 column: "ToppingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SideOrder_SideId",
+                table: "SideOrder",
+                column: "SideId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -217,6 +262,9 @@ namespace Pizza.Migrations
                 name: "PizzaToppings");
 
             migrationBuilder.DropTable(
+                name: "SideOrder");
+
+            migrationBuilder.DropTable(
                 name: "Processes");
 
             migrationBuilder.DropTable(
@@ -224,6 +272,9 @@ namespace Pizza.Migrations
 
             migrationBuilder.DropTable(
                 name: "Toppings");
+
+            migrationBuilder.DropTable(
+                name: "Sides");
 
             migrationBuilder.DropTable(
                 name: "Orders");

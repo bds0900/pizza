@@ -19,6 +19,7 @@ namespace Pizza
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Process> Processes { get; set; }
         public DbSet<Topping> Toppings { get; set; }
+        public DbSet<Side> Sides { get; set; }
 
 
         public DbSet<Order> Orders { get; set; }
@@ -55,7 +56,10 @@ namespace Pizza
 
             modelBuilder.Entity<Entities.Type>()
                 .HasKey(b => b.TypeId);
-            
+
+            modelBuilder.Entity<Side>()
+                .HasKey(b => b.SideId);
+
 
             modelBuilder.Entity<Entities.Pizza>()
                 .Property(b => b.PizzaId)
@@ -87,6 +91,10 @@ namespace Pizza
                 .Property(b => b.ToppingId)
                 .ValueGeneratedOnAdd();
                 //.HasDefaultValueSql("NEWID()");
+
+            modelBuilder.Entity<Side>()
+                .Property(b => b.SideId)
+                .ValueGeneratedOnAdd();
 
             /////////////////////////////
             /*modelBuilder.Entity<Size>()
@@ -149,7 +157,6 @@ namespace Pizza
 
 
 
-
             modelBuilder.Entity<OrderProcess>()
                 .HasKey(pp => new { pp.OrderId, pp.ProcessId });
 
@@ -183,6 +190,24 @@ namespace Pizza
                 .WithMany(topping => topping.PizzaToppings)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(pt => pt.ToppingId);
+
+
+
+            modelBuilder.Entity<SideOrder>()
+                .HasKey(so=>new { so.OrderId,so.SideId});
+
+            modelBuilder.Entity<SideOrder>()
+                .HasOne(so => so.Order)
+                .WithMany(o => o.SideOrders)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasForeignKey(so => so.OrderId);
+
+            modelBuilder.Entity<SideOrder>()
+                .HasOne(so => so.Side)
+                .WithMany(o => o.SideOrders)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasForeignKey(so => so.SideId);
+
         }
 
     }

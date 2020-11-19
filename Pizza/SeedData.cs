@@ -75,6 +75,33 @@ namespace Pizza
                 new Topping{ToppingName="Jalapeno Pepper",ToppingPrice=1},
                 new Topping{ToppingName="Chicken",ToppingPrice=1},
             });
+            context.Sides.AddRange(new Side[]
+            {
+                new Side{
+                    SideName="Potato Wedges",
+                    SidePrice=3.99f,
+                    Image="https://keyassets-p2.timeincuk.net/wp/prod/wp-content/uploads/sites/53/2014/04/Potato-wedges-recipe.jpg",
+                    Description=""
+                },
+                new Side{
+                    SideName="Garlic Bread",
+                    SidePrice=2.59f,
+                    Image="http://www.grandbaby-cakes.com/wp-content/uploads/2014/04/homemade-garlic-bread-3.jpg",
+                    Description=""
+                },
+                new Side{
+                    SideName="Wings",
+                    SidePrice=5.99f,
+                    Image="http://www.blizzstatic.com/dynamicmedia/image/0115/54b96fa6b837d.jpg?w=800",
+                    Description=""
+                },
+                new Side{
+                    SideName="Caesar Salad",
+                    SidePrice=3.99f,
+                    Image="http://tsgcookin.com/wp-content/uploads/2012/12/Ceasar+Salad+482.jpg",
+                    Description=""
+                },
+            });
             context.Processes.AddRange(new Process[]{
                 new Process{Status="Preparing"},
                 new Process{Status="Making"},

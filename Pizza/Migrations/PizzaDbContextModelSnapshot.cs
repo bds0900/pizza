@@ -137,6 +137,45 @@ namespace Pizza.Migrations
                     b.ToTable("Processes");
                 });
 
+            modelBuilder.Entity("Entities.Side", b =>
+                {
+                    b.Property<int>("SideId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SideName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("SidePrice")
+                        .HasColumnType("real");
+
+                    b.HasKey("SideId");
+
+                    b.ToTable("Sides");
+                });
+
+            modelBuilder.Entity("Entities.SideOrder", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SideId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId", "SideId");
+
+                    b.HasIndex("SideId");
+
+                    b.ToTable("SideOrder");
+                });
+
             modelBuilder.Entity("Entities.Size", b =>
                 {
                     b.Property<int>("SizeId")
@@ -250,6 +289,21 @@ namespace Pizza.Migrations
                     b.HasOne("Entities.Topping", "Topping")
                         .WithMany("PizzaToppings")
                         .HasForeignKey("ToppingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Entities.SideOrder", b =>
+                {
+                    b.HasOne("Entities.Order", "Order")
+                        .WithMany("SideOrders")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Side", "Side")
+                        .WithMany("SideOrders")
+                        .HasForeignKey("SideId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
