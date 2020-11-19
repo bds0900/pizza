@@ -16,6 +16,7 @@ namespace Entities
         public Customer Customer { get; set; }
 
         public List<Pizza> Pizzas { get; set; }
+        public List<SideOrder> SideOrders { get; set; }
         public List<OrderProcess> OrderProcesses { get; set; }
     }
 }
