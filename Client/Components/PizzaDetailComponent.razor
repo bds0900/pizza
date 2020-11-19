@@ -1,6 +1,8 @@
 ﻿@page "/menu/{PizzaName}"
-@using Client.Models
 @using System.Text.Json
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject StateContainer StateContainer
+@implements IDisposable
 <h3>MenuComponent</h3>
 @if (PizzaInfo == null)
 {
@@ -9,7 +11,7 @@
 else
 {
     <div class="container-fluid">
-        <div class="row " >
+        <div class="row ">
             <div class="col-6" style="background-color:pink">
                 <img class="img-fluid" src="@PizzaInfo.Type.Where(t=>t.TypeName==PizzaName).FirstOrDefault().Image" />
             </div>
@@ -31,32 +33,39 @@ else
                         </div>
                     </div>
                 </div>
-                <p class="display-4 text-center">Toppings</p>
-                <div class="container">
-                    <div class="row">
-                        <div class="btn-group-toggle" data-toggle="buttons">
-                            @foreach (var topping in PizzaInfo.Topping)
-                            {
-                                <label class="btn btn-secondary @(SelectedTopping.Contains(topping.ToppingId)?"active":"")">
-                                    <input type="checkbox" @bind="topping.ToppingId" @onclick="((e)=>handleClick(topping))" />
-                                    @topping.ToppingName
-                                    <br />
-                                    + $@topping.ToppingPrice
-                                </label>
-                            }
+
+                @if (PizzaName == "Custom")
+                {
+                    <p class="display-4 text-center">Toppings</p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="btn-group-toggle" data-toggle="buttons">
+                                @foreach (var topping in PizzaInfo.Topping)
+                                {
+                                    <label class="btn btn-secondary @(SelectedTopping.Contains(topping.ToppingId)?"active":"")">
+                                        <input type="checkbox" @bind="topping.ToppingId" @onclick="((e)=>handleClick(topping))" />
+                                        @topping.ToppingName
+                                        <br />
+                                        + $@topping.ToppingPrice
+                                    </label>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
 
                 <p class="display-4 text-center">Summary</p>
-                Subtotal $@SubtotalPrice
-                <br/>
-                Tax $@( Math.Round(SubtotalPrice * 0.13,2) )
+                Subtotal : $@SubtotalPrice
+                <br />
+                Tax : $@( Math.Round(SubtotalPrice * 0.13,2) )
+                <hr />
+                Order Total : $@TotalPrice
 
             </div>
         </div>
         <div class="display-2">
-            Order Total : $@TotalPrice
+            <button type="button" class="btn btn-primary" @onclick="AddItem">Add to Cart</button>
+            <button type="button" class="btn btn-primary">Proceed Checkout</button>
         </div>
 
 
@@ -88,33 +97,61 @@ else
     {
         SelectedSize = size;
         UpdatePrice();
-
     }
 
-    private double TotalPrice { get; set; }
+    private float TotalPrice { get; set; }
+    private float TaxPrice { get; set; }
     private float SubtotalPrice { get; set; }
     private void UpdatePrice()
     {
-        SubtotalPrice = SelectedSize.SizePrice + SelectedTopping.Aggregate(0f,(total, next)=>total + PizzaInfo.Topping.Where(d=>d.ToppingId== next).FirstOrDefault().ToppingPrice);
-        TotalPrice = Math.Round(Math.Round(SubtotalPrice, 2) + Math.Round(SubtotalPrice*0.13, 2), 2);
+        SubtotalPrice = SelectedSize.SizePrice + SelectedTopping.Aggregate(0f, (total, next) => total + PizzaInfo.Topping.Where(d => d.ToppingId == next).FirstOrDefault().ToppingPrice);
+        TaxPrice = (float)Math.Round(SubtotalPrice * 0.13, 2);
+        TotalPrice = (float)Math.Round(SubtotalPrice + TaxPrice, 2);
+
+
     }
+
+
+
+    private async Task AddItem()
+    {
+        var items = StateContainer.Items;
+        Item item = new Item
+        {
+            ItemId = new Guid(),
+            SizeId = SelectedSize.SizeId,
+            TypeId = PizzaInfo.Type.Where(o => o.TypeName == PizzaName).FirstOrDefault().TypeId,
+            ToppingId = SelectedTopping.ToArray(),
+            Subtotal = SubtotalPrice,
+            Tax = (float)Math.Round(SubtotalPrice * 0.13, 2),
+            Total = TotalPrice
+        };
+        items.Add(item);
+
+        StateContainer.SetItems(items);
+        StateContainer.SetSubTotal((float)Math.Round(StateContainer.SubTotal + SubtotalPrice, 2));
+        StateContainer.SetTax((float)Math.Round(StateContainer.Tax + TaxPrice, 2));
+        StateContainer.SetTotal((float)Math.Round(StateContainer.Total + TotalPrice, 2));
+
+    }
+
 
 
     protected async override Task OnInitializedAsync()
     {
-        Console.WriteLine("Oninializedasync is called");
-        HttpClient _client = new HttpClient();
-        //var PizzaInfo = await _client.GetFromJsonAsync<PizzaInfo>("https://localhost:44355/api/pizza");
-        var response = await _client.GetAsync("https://localhost:44355/api/pizza");
-        var content = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new ApplicationException(content);
-        }
-
-        var products = JsonSerializer.Deserialize<PizzaInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        PizzaInfo = products;
-        SelectedSize = products.Size.First();
+        @*var result = await ProtectedSessionStore.GetAsync<PizzaInfo>("PizzaInfo");
+            PizzaInfo = result.Success ? result.Value : null;
+            SelectedSize = PizzaInfo.Size.First();*@
+        PizzaInfo = StateContainer.PizzaInfo;
+        SelectedSize = PizzaInfo.Size.First();
         UpdatePrice();
+
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
     }
 }

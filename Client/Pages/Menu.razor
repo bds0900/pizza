@@ -1,12 +1,13 @@
 ﻿@page "/menu"
-@using Client.Models
 @using Client.Components
 @using System.Text.Json
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject StateContainer StateContainer
+@implements IDisposable
 <h1>
     menu page
 </h1>
-    <MenuListComponent PizzaInfo="@PizzaInfo" />
-
+<MenuListComponent PizzaInfo="@PizzaInfo" />
 
 @code{
     private PizzaInfo PizzaInfo { get; set; }
@@ -25,6 +26,20 @@
 
         var products = JsonSerializer.Deserialize<PizzaInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         PizzaInfo = products;
+
+        //await ProtectedSessionStore.SetAsync("PizzaInfo", products);
+        StateContainer.OnChange += StateHasChanged;
+        ChangePizzaInfoValue();
+    }
+
+    private void ChangePizzaInfoValue()
+    {
+        StateContainer.SetPizzaInfo(PizzaInfo);
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
     }
 
 

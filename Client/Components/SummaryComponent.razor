@@ -1,0 +1,19 @@
+﻿@inject StateContainer StateContainer
+<h3>SummaryComponent</h3>
+<div class="container-fluid">
+    <div>
+        Subtotal:@StateContainer.SubTotal
+    </div>
+    <div>
+        Tax:@StateContainer.Tax
+    </div>
+    <div>
+        Total:@StateContainer.Total
+    </div>
+    <button ype="button" class="btn btn-primary">
+        Proceed to checkout
+    </button>
+</div>
+@code {
+
+}
