@@ -87,7 +87,7 @@ namespace Pizza.Controllers
         public JsonResult GetOrderInfo(Guid orderId)
         {
 
-            var pizzas =
+            /*var pizzas =
                         _context.Orders
                         .Join(_context.Pizzas, o => o.OrderId, p => p.OrderId,
                             (o, p) => new { o.Created, p.OrderId, p.PizzaId, p.SizeId, p.TypeId, p.Qty })
@@ -129,7 +129,7 @@ namespace Pizza.Controllers
                                      select new { side.SideName, side.SidePrice }).ToArray()
                         })
                         .AsEnumerable()
-                        .Where(o => o.OrderId == orderId);
+                        .Where(o => o.OrderId == orderId);*/
             /*.GroupBy(g => g.OrderId);*/
             var order = _context.Orders.Where(o => o.OrderId == orderId).FirstOrDefault();
             var pizzaitem = _context.Pizzas.Where(o => o.OrderId == orderId)
