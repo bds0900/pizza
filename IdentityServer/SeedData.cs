@@ -114,6 +114,8 @@ namespace IdentityServer
                             new Claim(JwtClaimTypes.GivenName, "Bob"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
+                            new Claim(JwtClaimTypes.Email, "bob@gmail.com"),
+                            new Claim(JwtClaimTypes.PhoneNumber, "519-666-7777"),
                             new Claim("location", "somewhere")
                         }).Result;
                         if (!result.Succeeded)

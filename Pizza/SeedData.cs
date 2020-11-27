@@ -103,11 +103,11 @@ namespace Pizza
                 },
             });
             context.Processes.AddRange(new Process[]{
-                new Process{Status="Preparing"},
-                new Process{Status="Making"},
-                new Process{Status="Ready to deliver"},
-                new Process{Status="Shipped"},
-                new Process{Status="Received"},
+                new Process{ Status="Preparing",ProcessNum=1},
+                new Process{ Status="Making",ProcessNum=2},
+                new Process{ Status="Ready to deliver",ProcessNum=3},
+                new Process{ Status="Shipped",ProcessNum=4},
+                new Process{ Status="Received",ProcessNum=5},
             });
             context.SaveChanges(); 
             /*

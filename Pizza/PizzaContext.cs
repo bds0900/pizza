@@ -26,6 +26,7 @@ namespace Pizza
         public DbSet<OrderProcess> OrderProcess { get; set; }
         public DbSet<PizzaTopping> PizzaToppings { get; set; }
         public DbSet<OrderProcess> OrderProcesses { get; set; }
+        public DbSet<SideOrder> SideOrders { get; set; }
 
         public PizzaDbContext(DbContextOptions<PizzaDbContext>options):base(options)
         {
@@ -79,7 +80,7 @@ namespace Pizza
             modelBuilder.Entity<Entities.Type>()
                 .Property(b => b.TypeId)
                 .ValueGeneratedOnAdd();
-                //.HasDefaultValueSql("NEWID()");
+            //.HasDefaultValueSql("NEWID()");
 
 
             modelBuilder.Entity<Process>()
@@ -129,7 +130,7 @@ namespace Pizza
 
             modelBuilder.Entity<Order>()
                 .Property(b => b.Created)
-                .HasDefaultValueSql("getdate()");
+                .HasDefaultValueSql("getutcdate()");
 
             // 두개의 one to many로 나눈다
             modelBuilder.Entity<Order>()

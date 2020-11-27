@@ -12,6 +12,7 @@ namespace Entities
 
         public int SizeId { get; set; }
         public Size Size { get; set; }
+        public int Qty { get; set; }
 
         public List<PizzaTopping> PizzaToppings { get; set; }
 

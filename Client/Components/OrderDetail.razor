@@ -1,0 +1,102 @@
+﻿
+
+
+@if (OrderInfo != null)
+{
+    <div class="row">
+        <div class="col-md-1">Size</div>
+        <div class="col-md-2">Type</div>
+        <div class="col-md-1">Price</div>
+        <div class="col-md-1">Qty</div>
+        <div class="col-md-1">Subtotal</div>
+        <div class="col-md-1">Tax</div>
+        <div class="col-md-1">Total</div>
+    </div>
+
+    <hr />
+    @foreach (var pizza in @OrderInfo.Pizzas)
+    {
+        var sub = Math.Round(
+            StateContainer.PizzaInfo.Size.Where(s => s.SizeId == pizza.SizeId).Select(s => s.SizePrice).FirstOrDefault() * pizza.Qty +
+            StateContainer.PizzaInfo.Topping.Where(t => pizza.ToppingId.Contains(t.ToppingId)).Select(t => t.ToppingPrice).Sum()
+            , 2);
+        <div class="row">
+            <div class="col-md-1">
+                @StateContainer.PizzaInfo.Size.Where(s => s.SizeId == pizza.SizeId).Select(s => s.SizeName).FirstOrDefault()
+            </div>
+            <div class="col-md-2">
+                @StateContainer.PizzaInfo.Type.Where(t => t.TypeId == pizza.TypeId).Select(t => t.TypeName).FirstOrDefault()
+            </div>
+            <div class="col-md-1">
+                $@StateContainer.PizzaInfo.Size.Where(s => s.SizeId == pizza.SizeId).Select(s => s.SizePrice).FirstOrDefault()
+            </div>
+            <div class="col-md-1">
+                @pizza.Qty
+            </div>
+            <div class="col-md-1">
+                $@sub
+            </div>
+            <div class="col-md-1">
+                $@(Math.Round(sub*0.13,2))
+            </div>
+            <div class="col-md-1">
+                $@(Math.Round(sub*1.13,2))
+            </div>
+
+
+        </div>
+        @if (@pizza.ToppingId.Count() != 0)
+        {
+
+            @foreach (var topping in @StateContainer.PizzaInfo.Topping.Where(t => @pizza.ToppingId.Contains(t.ToppingId)))
+            {
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-2">
+                        @topping.ToppingName
+                    </div>
+                    <div class="col-md-1">
+                        $@topping.ToppingPrice
+                    </div>
+                </div>
+            }
+        }
+        <hr />
+    }
+
+    <hr />
+    @foreach (var side in OrderInfo.Sides)
+    {
+        var sub = Math.Round(@StateContainer.Sides.Where(s => s.SideId == side.SideId).Select(s => s.SidePrice).FirstOrDefault()*side.Qty, 2);
+        <div class="row">
+            <div class="col-1">
+            </div>
+            <div class="col-2">
+                @StateContainer.Sides.Where(s => s.SideId == side.SideId).Select(s => s.SideName).FirstOrDefault()
+            </div>
+            <div class="col-1">
+                $@StateContainer.Sides.Where(s => s.SideId == side.SideId).Select(s => s.SidePrice).FirstOrDefault()
+            </div>
+            <div class="col-1">
+                @side.Qty
+            </div>
+
+            <div class="col-1">
+                $@sub
+            </div>
+            <div class="col-1">
+                $@Math.Round(sub * 0.13, 2)
+            </div>
+            <div class="col-1">
+                $@Math.Round(sub * 1.13, 2)
+            </div>
+        </div>
+        <hr />
+    }
+
+}
+else
+{
+
+}
+

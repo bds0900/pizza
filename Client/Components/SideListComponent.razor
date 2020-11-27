@@ -1,31 +1,19 @@
 ﻿@inject StateContainer StateContainer
-<h3>SideListComponent</h3>
-<div class="row">
-@if(Sides!=null)
-{ 
-    @foreach (var type in @Sides)
-    {
-        <div class="card-deck">
-            <div class="card" style="width: 18rem;">
-                <img class="card-img-top " src="@type.Image" alt="Card image cap" width="400" height="400">
-                <div class="card-body">
-                    <h5 class="card-title">@type.SideName</h5>
-                    <h5 class="card-title">@type.SidePrice</h5>
-                    <p class="card-text">@type.Description</p>
 
-                    <div class="display-2">
-                        <button type="button" class="btn btn-primary">Add to Cart</button>
-                        <button type="button" class="btn btn-primary">Proceed Checkout</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+@if (Sides != null)
+{
+    @foreach (var side in @Sides)
+    {
+        <SideDetailComponent Side="side"/>
     }
 }
-</div>
+else
+{
+    <div>Loading...</div>
+}
 @code {
     [Parameter]
     public List<Side> Sides { get; set; }
-
 
 }

@@ -1,38 +1,47 @@
-﻿@inject ProtectedSessionStorage ProtectedSessionStore
-@inject StateContainer StateContainer
-<h3>ItemListComponent</h3>
+﻿
 <div class="container-fluid">
 
     <div class="row">
-        <div class="col-8">Item</div>
-        <div class="col-2">Price</div>
-        <div class="col-2">Subtotal</div>
+        <div class="col-md-1"> </div>
+        <div class="col-md-7">Item</div>
+        <div class="col-md-2">Price</div>
+        <div class="col-md-2">Subtotal</div>
     </div>
+    <hr/>
     @foreach (var item in @StateContainer.Items)
     {
         <div class="row">
-            <div class="col-8" style="background-color:forestgreen">
+
+            <div class="col-md-1">
+                <div class="d-flex flex-column align-items-center">
+                    <button @onclick="(()=>RemoveItem(item.ItemId))">Delete</button>
+                </div>
+            </div>
+
+            <div class="col-md-7">
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-12 col-md-4" style="background-color:palevioletred">
+                        <div class="col-sm-12 col-md-4">
                             <a href="/menu/@StateContainer.PizzaInfo.Type.Where(t => t.TypeId == @item.TypeId).FirstOrDefault().TypeName ">
-                                <img src="@StateContainer.PizzaInfo.Type.Where(t=>t.TypeId== @item.TypeId).FirstOrDefault().Image" width="100" height="100" />
+                                <img src="@StateContainer.PizzaInfo.Type.Where(t=>t.TypeId==  @item.TypeId).FirstOrDefault().Image" width="100" height="100" />
                             </a>
                         </div>
-                        <div class="col-sm-12 col-md-4" style="background-color:cornflowerblue">
+                        <div class="col-sm-12 col-md-4">
                             <div>
                                 @StateContainer.PizzaInfo.Type.Where(t => t.TypeId == @item.TypeId).FirstOrDefault().TypeName pizza
 
                             </div>
                             <div>
-                                @StateContainer.PizzaInfo.Size.Where(t => t.SizeId == item.SizeId).FirstOrDefault().SizeName
-                                ($@StateContainer.PizzaInfo.Size.Where(t => t.SizeId == item.SizeId).FirstOrDefault().SizePrice)
+                                @StateContainer.PizzaInfo.Size.Where(t => t.SizeId == @item.SizeId).FirstOrDefault().SizeName
 
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-4" style="background-color:yellowgreen">
-                            <div>Topping</div>
-                            @foreach (var topping in @StateContainer.PizzaInfo.Topping.Where(i => item.ToppingId.Contains(i.ToppingId)))
+                        <div class="col-sm-12 col-md-4">
+                            @if (item.ToppingId.Length != 0)
+                            {<div>Topping</div>}
+                            else
+                            {<div></div>}
+                            @foreach (var topping in @StateContainer.PizzaInfo.Topping.Where(i => @item.ToppingId.Contains(i.ToppingId)))
                             {
                                 <div>
                                     @topping.ToppingName : +$@topping.ToppingPrice
@@ -42,35 +51,57 @@
                     </div>
                 </div>
             </div>
-            <div class="col-2">
+
+            <div class="col-md-2">
                 $@StateContainer.PizzaInfo.Size.Where(t => t.SizeId == @item.SizeId).FirstOrDefault().SizePrice
+                <br />
+                Qty:@item.Qty
             </div>
-            <div class="col-2">
+
+            <div class="col-md-2">
+                $@item.Subtotal
+            </div>
+        </div>
+        <hr />
+    }
+
+
+    @foreach (var item in @StateContainer.SideItems)
+    {
+        <div class="row">
+
+            <div class="col-md-1">
+                <div class="d-flex flex-column align-items-center">
+                    <button @onclick="(()=>RemoveSideItem(item.ItemId))">Delete</button>
+                </div>
+            </div>
+
+            <div class="col-md-7" >
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-4" >
+                            <a href="/sides">
+                                <img src="@StateContainer.Sides.Where(s=>s.SideId==item.SideId).FirstOrDefault().Image" width="100" height="100" />
+                            </a>
+                        </div>
+                        <div class="col-sm-12 col-md-4" >
+                            <div>
+                                @StateContainer.Sides.Where(s => s.SideId == item.SideId).FirstOrDefault().SideName
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                $@StateContainer.Sides.Where(s => s.SideId == item.SideId).FirstOrDefault().SidePrice
+                <br />
+                Qty:@item.Qty
+            </div>
+            <div class="col-md-2">
                 $@item.Subtotal
             </div>
         </div>
         <hr />
     }
 </div>
-@code {
-
-    List<Item> Items { get; set; }
-    protected override async Task OnInitializedAsync()
-    {
-
-        StateContainer.OnChange += StateHasChanged;
-    }
-
-    private async Task RemoveItem(Guid itemid)
-    {
-        var items = StateContainer.Items;
-        var item = items.Find(id => id.ItemId == itemid);
-        items.Remove(item);
-        StateContainer.SetItems(items);
-    }
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
-    }
-}

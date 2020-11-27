@@ -1,5 +1,7 @@
 ﻿using Client.Models;
 using Entities;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,30 +21,25 @@ namespace Client.Store
             NotifyStateChanged();
         }
 
-        public float SubTotal { get; set; } = 0;
-        public float Tax { get; set; } = 0;
-        public float Total { get; set; } = 0;
-        public List<Item> Items { get; set; } = new List<Item>();
+        public List<PizzaItem> Items { get; set; } = new List<PizzaItem>();
+        public List<SideItem> SideItems { get; set; } = new List<SideItem>();
         public PizzaInfo PizzaInfo { get; set; } = null;
         public List<Side> Sides { get; set; } = null;
-        public void SetSubTotal(float subtotal)
+        public Customer Customer { get; set; } = new Customer { CustomerId = Guid.NewGuid() };
+        public List<Order> Orders { get; set; } = new List<Order>();
+        public void SetCustomer(Customer customer)
         {
-            SubTotal = subtotal;
+            Customer = customer;
             NotifyStateChanged();
         }
-        public void SetTax(float tax)
-        {
-            Tax = tax;
-            NotifyStateChanged();
-        }
-        public void SetTotal(float total)
-        {
-            Total = total;
-            NotifyStateChanged();
-        }
-        public void SetItems(List<Item> items)
+        public void SetItems(List<PizzaItem> items)
         {
             Items = items;
+            NotifyStateChanged();
+        }
+        public void SetSideItems(List<SideItem> items)
+        {
+            SideItems = items;
             NotifyStateChanged();
         }
         public void SetPizzaInfo(PizzaInfo pizzainfo)

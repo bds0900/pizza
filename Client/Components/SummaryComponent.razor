@@ -1,19 +1,41 @@
 ﻿@inject StateContainer StateContainer
-<h3>SummaryComponent</h3>
+<h3>Summary</h3>
 <div class="container-fluid">
     <div>
-        Subtotal:@StateContainer.SubTotal
+        Subtotal:@(
+            Math.Round(
+            StateContainer.Items.Select(i=>i.Subtotal).Sum()+
+            StateContainer.SideItems.Select(i=>i.Subtotal).Sum()
+            ,2)
+        )
     </div>
     <div>
-        Tax:@StateContainer.Tax
+        Tax:@(
+            Math.Round(
+            (StateContainer.Items.Select(i => i.Subtotal).Sum() +
+            StateContainer.SideItems.Select(i => i.Subtotal).Sum())
+            *0.13
+            ,2)
+        )
     </div>
     <div>
-        Total:@StateContainer.Total
+        Total:@(
+            Math.Round(
+            (StateContainer.Items.Select(i => i.Subtotal).Sum() +
+            StateContainer.SideItems.Select(i => i.Subtotal).Sum())
+            *1.13
+            ,2)
+        )
     </div>
-    <button ype="button" class="btn btn-primary">
-        Proceed to checkout
-    </button>
+    
 </div>
 @code {
-
+    protected async override Task OnInitializedAsync()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
 }

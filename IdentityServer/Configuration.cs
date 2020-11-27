@@ -15,6 +15,8 @@ namespace IdentityServer
             new List<IdentityResource> {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(),
+                new IdentityResources.Phone(),
                 new IdentityResource
                 { 
                     Name="rc.scope",
@@ -51,12 +53,15 @@ namespace IdentityServer
                         "ApiTwo",//api resource
                         IdentityServerConstants.StandardScopes.OpenId,//identity resource
                         IdentityServerConstants.StandardScopes.Profile,//identity resource
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Phone,
                         "rc.scope",//identity resource
+                        
                     },
-                    RedirectUris={"https://localhost:44349/signin-oidc" },
+                    RedirectUris={"https://localhost:44316/signin-oidc" },
                     RequireConsent=false,//consent page가 안뜨게 한다. 이러이러한 권한을 수락하시겠습니까? 하고 물어보는 페이지
 
-                    //AlwaysIncludeUserClaimsInIdToken=true,
+                    AlwaysIncludeUserClaimsInIdToken=true,
                 }
             };
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -64,6 +69,8 @@ namespace IdentityServer
             {
                 new ApiScope("scope1"),
                 new ApiScope("scope2"),
+                new ApiScope("ApiOne"),
+                new ApiScope("ApiTwo"),
             };
     }
 }

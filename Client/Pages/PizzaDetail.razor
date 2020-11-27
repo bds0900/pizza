@@ -1,0 +1,98 @@
+﻿@page "/menu/{PizzaName}"
+@using System.Text.Json
+@using Client.Components
+@implements IDisposable
+
+@if (PizzaInfo == null)
+{
+    <div>loading...</div>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row ">
+            <div class="col-6" style="background-color:pink">
+                <img class="img-fluid" src="@PizzaInfo.Type.Where(t=>t.TypeName==PizzaName).FirstOrDefault().Image" />
+            </div>
+
+
+            <div class="col-6" style="background-color:cornflowerblue">
+
+                <p class="display-4 text-center">Size</p>
+
+                <div class="container">
+                    <div class="d-flex justify-content-around">
+                        <div class="btn-group-toggle" data-toggle="buttons">
+                            @foreach (var size in PizzaInfo.Size)
+                            {
+                                <label class="btn btn-secondary @((SelectedSize.SizeId==size.SizeId)?"active":"")">
+                                    <input type="radio" class="btn btn-outline-success" checked @bind="size.SizeId" @onclick="((e)=>SelectionChanged(size))">
+                                    @size.SizeName
+                                    <br />
+                                    $@size.SizePrice
+                                </label>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
+                @if (PizzaName == "Custom")
+                {
+                    <p class="display-4 text-center">Toppings</p>
+                    <div class="container">
+                        <div class="d-flex justify-content-around">
+
+                            <div class="btn-group-toggle" data-toggle="buttons">
+                                @foreach (var topping in PizzaInfo.Topping)
+                                {
+                                    <label class="btn btn-secondary @(SelectedTopping.Contains(topping.ToppingId)?"active":"")">
+                                        <input type="checkbox" @bind="topping.ToppingId" @onclick="((e)=>handleClick(topping))" />
+                                        @topping.ToppingName
+                                        <br />
+                                        + $@topping.ToppingPrice
+                                    </label>
+                                }
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+
+                <p class="display-4 text-center">Qty</p>
+                <div class="container">
+                    <div class="d-flex justify-content-center">
+                        <button class="oi oi-minus" @onclick="(()=>AddQty(-1))"></button>
+                        <input class="text-center" style="width:50px" value="@Qty" @onchange="((e) =>  ChangQty(Convert.ToInt32(e.Value)) )">
+                        <button class="oi oi-plus" @onclick="(()=>AddQty(1))"></button>
+                    </div>
+                </div>
+
+
+                <p class="display-4 text-center">Summary</p>
+
+                <div class="container">
+                    <div class="d-flex flex-column align-items-center">
+                        <div>
+                            Subtotal : $@SubtotalPrice
+                        </div>
+                        <div>
+                            Tax : $@( Math.Round(SubtotalPrice * 0.13,2) )
+                        </div>
+                        <div>
+                            Order Total : $@TotalPrice
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="display-2">
+            <button type="button" class="btn btn-primary" @onclick="AddItem">Add to Cart</button>
+        </div>
+
+
+    </div>
+}
+

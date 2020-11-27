@@ -1,0 +1,80 @@
+﻿@inject StateContainer StateContainer
+
+<div class="d-flex align-items-center flex-column">
+
+    <h1 class="display-3">Payment Successful</h1>
+    <div>
+        <div>
+            <strong>Order ID</strong>:<mark>@Result.OrderId</mark>
+        </div>
+        <div>
+            <strong>Amount Paid</strong>:<mark>$@Result.Total</mark>
+        </div>
+    </div>
+    <br />
+
+    <div class="h3">
+        You can track your item with Order ID
+    </div>
+    @*   @if (Result.Pizzas != null)
+        {
+
+            @foreach (var pizza in @Result.Pizzas)
+            {
+                <div class="h4">pizza</div>
+                <div> @StateContainer.PizzaInfo.Type.Where(o => o.TypeId == pizza.TypeId).Select(o => o.TypeName).FirstOrDefault()</div>
+
+                @if (pizza.PizzaToppings != null)
+                {
+                    <div class="h6">topping</div>
+                    <ul>
+
+                        @foreach (var topping in @StateContainer.PizzaInfo.Topping.Where(o => pizza.PizzaToppings.Select(t => t.ToppingId).Contains(o.ToppingId)))
+                        {
+                            <li>@topping.ToppingName</li>
+                        }
+                    </ul>
+
+                }
+            }
+        }
+
+        <br />
+
+        @if (Result.SideOrders != null)
+        {
+            <div class="h4">
+                Sides
+            </div>
+
+            @foreach (var side in @StateContainer.Sides.Where(s => Result.SideOrders.Select(s => s.SideId).Contains(s.SideId)))
+            {
+                <div>@side.SideName</div>
+            }
+
+
+        }
+
+        <br />
+        <div class="h4">Summary</div>
+        <div>
+            Subtotal:@Result.Subtotal
+            <br />
+            Tax:@Result.Tax
+            <br />
+            Total:@Result.Total
+        </div>
+        <br />*@
+
+
+
+
+
+</div>
+
+@code{
+
+    [Parameter]
+    public Order Result { get; set; }
+
+}

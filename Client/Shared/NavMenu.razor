@@ -1,5 +1,4 @@
-﻿@inject StateContainer StateContainer
-
+﻿
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Client</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -16,29 +15,47 @@
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="menu">
-                <span class="oi oi-plus" aria-hidden="true"></span> Menu
+                <span class="oi oi-menu" aria-hidden="true"></span> Menu
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="sides">
-                <span class="oi oi-plus" aria-hidden="true"></span> Sides
+                <span class="oi oi-menu" aria-hidden="true"></span> Sides
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="cart">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Cart @(StateContainer.Items.Count>0? StateContainer.Items.Count:"")
+                <span class="oi oi-cart" aria-hidden="true"></span> Cart
+                @(StateContainer.Items.Count+ StateContainer.SideItems.Count > 0 ?
+                StateContainer.Items.Count + StateContainer.SideItems.Count : "")
             </NavLink>
         </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="track">
+                <span class="oi oi-location" aria-hidden="true"></span> Track
+            </NavLink>
+        </li>
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="history">
+                        <span class="oi oi-list" aria-hidden="true"></span> Order History
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="logout">
+                        <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                    </NavLink>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
     </ul>
 </div>
 
-@code {
-    private bool collapseNavMenu = true;
-
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}

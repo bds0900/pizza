@@ -1,0 +1,48 @@
+﻿@page "/track"
+
+<div class="container">
+    <EditForm Model="model" OnValidSubmit="TrackOrderId">
+        
+
+        <div class="d-flex flex-column align-items-center">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div>
+                Track with Order Id
+            </div>
+            <br />
+            <div>
+                <InputText @bind-Value="model.OrderId" />
+            </div>
+            <br />
+            <div>
+
+                <button type="submit" class="btn btn-primary">track</button>
+            </div>
+        </div>
+    </EditForm>
+    @if (Processing != null)
+    {
+
+        <div class="row text-center">
+
+            @foreach (var p in Processing)
+            {
+                <div class="col-3 ">
+                    <div>@p.Status</div>
+                </div>
+            }
+
+        </div>
+        <div class="progress" style="height: 20px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                 role="progressbar" style="width: @(Processing.Count/4f*100)%;"
+                 aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                @(Processing.Count/4f*100)%
+            </div>
+        </div>
+    }
+
+
+
+</div>

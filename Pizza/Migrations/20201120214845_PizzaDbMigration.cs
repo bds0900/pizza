@@ -28,7 +28,8 @@ namespace Pizza.Migrations
                 {
                     ProcessId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(nullable: true)
+                    Status = table.Column<string>(nullable: true),
+                    ProcessNum = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -100,7 +101,10 @@ namespace Pizza.Migrations
                 {
                     OrderId = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()"),
                     Created = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    CustomerId = table.Column<Guid>(nullable: false)
+                    CustomerId = table.Column<Guid>(nullable: false),
+                    Subtotal = table.Column<float>(nullable: false),
+                    Tax = table.Column<float>(nullable: false),
+                    Total = table.Column<float>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -144,6 +148,7 @@ namespace Pizza.Migrations
                     PizzaId = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()"),
                     TypeId = table.Column<int>(nullable: false),
                     SizeId = table.Column<int>(nullable: false),
+                    Qty = table.Column<int>(nullable: false),
                     OrderId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -170,23 +175,24 @@ namespace Pizza.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SideOrder",
+                name: "SideOrders",
                 columns: table => new
                 {
                     SideId = table.Column<int>(nullable: false),
-                    OrderId = table.Column<Guid>(nullable: false)
+                    OrderId = table.Column<Guid>(nullable: false),
+                    Qty = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SideOrder", x => new { x.OrderId, x.SideId });
+                    table.PrimaryKey("PK_SideOrders", x => new { x.OrderId, x.SideId });
                     table.ForeignKey(
-                        name: "FK_SideOrder_Orders_OrderId",
+                        name: "FK_SideOrders_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SideOrder_Sides_SideId",
+                        name: "FK_SideOrders_Sides_SideId",
                         column: x => x.SideId,
                         principalTable: "Sides",
                         principalColumn: "SideId",
@@ -248,8 +254,8 @@ namespace Pizza.Migrations
                 column: "ToppingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SideOrder_SideId",
-                table: "SideOrder",
+                name: "IX_SideOrders_SideId",
+                table: "SideOrders",
                 column: "SideId");
         }
 
@@ -262,7 +268,7 @@ namespace Pizza.Migrations
                 name: "PizzaToppings");
 
             migrationBuilder.DropTable(
-                name: "SideOrder");
+                name: "SideOrders");
 
             migrationBuilder.DropTable(
                 name: "Processes");

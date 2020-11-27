@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 //using BasicPizza;
@@ -29,20 +30,20 @@ namespace Pizza
         }
         public void Run(Guid orderId)
         {
-            _context.OrderProcesses.AddAsync(new OrderProcess { OrderId = orderId, ProcessId = 2 });
+            _context.OrderProcesses.AddAsync(new OrderProcess { OrderId = orderId, ProcessId = _context.Processes.Where(p => p.ProcessNum == 2).FirstOrDefault().ProcessId });
             _context.SaveChangesAsync();
 
             //making
             Trace.WriteLine("Making");
             MakePizza();
 
-            _context.OrderProcesses.AddAsync(new OrderProcess { OrderId = orderId, ProcessId = 3 });
+            _context.OrderProcesses.AddAsync(new OrderProcess { OrderId = orderId, ProcessId = _context.Processes.Where(p => p.ProcessNum == 3).FirstOrDefault().ProcessId });
             _context.SaveChangesAsync();
             //ready to deliver
             Trace.WriteLine("Ready to deliver");
             Thread.Sleep(6000);
 
-            _context.OrderProcesses.AddAsync(new OrderProcess { OrderId = orderId, ProcessId = 4 });
+            _context.OrderProcesses.AddAsync(new OrderProcess { OrderId = orderId, ProcessId = _context.Processes.Where(p => p.ProcessNum == 4).FirstOrDefault().ProcessId });
             _context.SaveChangesAsync();
             //shipped
             Trace.WriteLine("Shipped");

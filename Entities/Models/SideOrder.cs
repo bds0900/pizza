@@ -13,5 +13,6 @@ namespace Entities
 
         public Guid OrderId { get; set; }
         public Order Order { get; set; }
+        public int Qty { get; set; }
     }
 }

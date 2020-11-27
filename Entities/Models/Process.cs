@@ -10,6 +10,7 @@ namespace Entities
     {
         public int ProcessId { get; set; }
         public string Status { get; set; }
+        public int ProcessNum { get; set; }
         public List<OrderProcess> OrderProcesses { get; set; }
     }
 }

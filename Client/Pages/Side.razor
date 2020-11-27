@@ -1,34 +1,9 @@
 ﻿@page "/sides"
-@using System.Text.Json
 @using Client.Components
-@inject StateContainer StateContainer
 @implements IDisposable
 
-<SideListComponent Sides="Sides">
-
-</SideListComponent>
-@code {
-    List<Entities.Side> Sides { get; set; }
-    protected async override Task OnInitializedAsync()
-    {
-        HttpClient _client = new HttpClient();
-        //var PizzaInfo = await _client.GetFromJsonAsync<PizzaInfo>("https://localhost:44355/api/pizza");
-        var response = await _client.GetAsync("https://localhost:44355/api/pizza/sides");
-        var content = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new ApplicationException(content);
-        }
-
-        var products = JsonSerializer.Deserialize<List<Entities.Side>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-        Sides = products;
-        StateContainer.SetSide(products);
-
-
-        StateContainer.OnChange += StateHasChanged;
-    }
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
-    }
-}
+<div class="container-fluid">
+    <div class="card-deck"
+        <SideListComponent Sides="Sides"/>
+    </div>
+</div>

@@ -1,21 +1,42 @@
 ﻿@page "/cart"
 @using Client.Components
-<h3>CartComponent</h3>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-8">
-            <ItemListComponent>
 
-            </ItemListComponent>
-        </div>
-        <div class="col-4">
-            <SummaryComponent>
 
-            </SummaryComponent>
-        </div>
-    </div>
-</div>
-
-@code {
+@if (checkout)
+{
+    <CheckOutComponent />
 
 }
+else if (Result!=null)
+{
+    <ResultComponent Result="@Result" />
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-8">
+                <ItemListComponent />
+            </div>
+            <div class="col-4">
+                <SummaryComponent />
+
+                <AuthorizeView>
+                    <Authorized>
+                        <button type="button" class="btn btn-primary" @onclick="CheckOut">
+                            Checkout
+                        </button>
+                    </Authorized>
+                    <NotAuthorized>
+                        <button type="button" class="btn btn-primary" @onclick="ProceedCheckOut">
+                            Proceed to checkout
+                        </button>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+            </div>
+        </div>
+    </div>
+}
+
+

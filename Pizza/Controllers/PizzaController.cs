@@ -61,76 +61,93 @@ namespace Pizza.Controllers
                 Topping = _context.Toppings.Select(o => new { o.ToppingId, o.ToppingName, o.ToppingPrice })
             });
         }
+        [HttpGet("track/{orderId}")]
+        public IEnumerable<Entities.Process> Track(Guid orderId)
+        {
+            var xx = (from d in _context.OrderProcesses
+                      join t in _context.Processes on d.ProcessId equals t.ProcessId
+                      where d.OrderId == orderId
+                      orderby t.ProcessNum
+                      select t).ToList();
+            return xx;
+        }
 
         // GET: api/Pizza/Customers/5/Orders
         [HttpGet("Customers/{id}/Orders", Name = "GetOrderIds")]
-        [Authorize]
-        public JsonResult GetOrderIds(Guid id)
+        //[Authorize]
+        public IEnumerable<Order> GetOrderIds(Guid id)
         {
-            var pizzaquery = _context.Orders.Where(o => o.Customer.CustomerId == id).Select(o => o.OrderId);
-            return new JsonResult(new
-            {
-                CustomerId = id,
-                OrderIds = pizzaquery
-            });
+            return _context.Orders.Where(o => o.Customer.CustomerId == id);
+
         }
 
-        // GET: api/Pizza/Orders/5
-        [HttpGet("Orders/{id}", Name = "GetOrderInfo")]
-        public JsonResult GetOrderInfo(Guid id)
-        {
-            /*var ret1 = from p in _context.Pizzas
-                       where p.OrderId == id
-                       select new
-                       {
-                           p.PizzaId,
-                           tt = (from topping in _context.Toppings
-                                 where (from pt in _context.PizzaToppings
-                                        where pt.PizzaId == p.PizzaId
-                                        select pt.ToppingId).Contains(topping.ToppingId)
-                                 select new { topping.ToppingName, topping.ToppingPrice }).ToArray()
-                       };*/
 
-            var pizzaquery = 
-                
+        // GET: api/Pizza/Orders/5
+        [HttpGet("Orders/{orderId}", Name = "GetOrderInfo")]
+        public JsonResult GetOrderInfo(Guid orderId)
+        {
+
+            var pizzas =
                         _context.Orders
-                        .Join(_context.Pizzas,o=>o.OrderId,p=>p.OrderId,
-                            (o, p) => new{
-                                o.Created,
-                                p.OrderId,
-                                p.PizzaId,
-                                p.SizeId,
-                                p.TypeId})
-                        .Join(_context.Types,p => p.TypeId,pt => pt.TypeId,
-                            (p, pt) => new{
-                                p.Created,
-                                p.OrderId,
-                                p.PizzaId,
-                                p.SizeId,
-                                pt.TypeName})
-                        .Join(_context.Sizes,p => p.SizeId,t => t.SizeId,
-                            (p, t) => new{
+                        .Join(_context.Pizzas, o => o.OrderId, p => p.OrderId,
+                            (o, p) => new { o.Created, p.OrderId, p.PizzaId, p.SizeId, p.TypeId, p.Qty })
+                        .Join(_context.Types, p => p.TypeId, pt => pt.TypeId,
+                            (p, pt) => new { p.Created, p.OrderId, p.PizzaId, p.SizeId, p.Qty, pt.TypeName, })
+                        .Join(_context.Sizes, p => p.SizeId, t => t.SizeId,
+                            (p, t) => new
+                            {
                                 p.OrderId,
                                 p.PizzaId,
                                 p.Created,
+                                p.Qty,
                                 type = p.TypeName,
                                 size = t.SizeName,
                                 price = t.SizePrice,
-                                /*top= (from pt in _context.PizzaToppings
-                                      where pt.PizzaId == p.PizzaId
-                                      select pt.ToppingId).ToList()*/
                                 toppings = (from topping in _context.Toppings
                                             where (from pt in _context.PizzaToppings
                                                    where pt.PizzaId == p.PizzaId
                                                    select pt.ToppingId).Contains(topping.ToppingId)
-                                            select new { topping.ToppingName, topping.ToppingPrice }).ToArray(),})
+                                            select new { topping.ToppingName, topping.ToppingPrice }).ToArray(),
+
+
+                            })
                         .AsEnumerable()
-                        .Where(o => o.OrderId == id)
+                        .Where(o => o.OrderId == orderId)
                         .GroupBy(g => g.PizzaId);
+
+            var sides = _context.Orders
+                        .Join(_context.SideOrders, o => o.OrderId, so => so.OrderId,
+                        (o, so) => new
+                        {
+                            o.Created,
+                            so.OrderId,
+                            so.Qty,
+                            sides = (from side in _context.Sides
+                                     where (from so in _context.SideOrders
+                                            where so.OrderId == orderId
+                                            select so.SideId).Contains(side.SideId)
+                                     select new { side.SideName, side.SidePrice }).ToArray()
+                        })
+                        .AsEnumerable()
+                        .Where(o => o.OrderId == orderId);
+            /*.GroupBy(g => g.OrderId);*/
+            var order = _context.Orders.Where(o => o.OrderId == orderId).FirstOrDefault();
+            var pizzaitem = _context.Pizzas.Where(o => o.OrderId == orderId)
+                .Select(o => new
+                {
+                    o.PizzaId,
+                    o.SizeId,
+                    o.TypeId,
+                    o.Qty,
+                    ToppingId =  o.PizzaToppings.Select(t => t.ToppingId)
+                    
+                }).ToList();
+            var sideitem = _context.SideOrders.Where(o => o.OrderId == orderId).Select(s => new { s.SideId, s.Qty }).ToList();
             return new JsonResult(new
             {
-                OrderId = id,
-                Pizzas = pizzaquery
+                Order=order,
+                Pizzas = pizzaitem,
+                Sides = sideitem
             });
         }
 
@@ -144,7 +161,7 @@ namespace Pizza.Controllers
             Order newOrder = null;
             try
             {
-               
+
                 if (customer == null)
                 {
                     newOrder = new Order { Customer = value.Customer };
@@ -153,11 +170,25 @@ namespace Pizza.Controllers
                 {
                     newOrder = new Order { Customer = customer };
                 }
+                var sub = (float)Math.Round(value.Pizzas.Select(o => o.Subtotal).Sum() + value.Sides.Select(o => o.Subtotal).Sum(), 2);
+                var tax = (float)Math.Round(sub * 0.13, 2);
+                var total = (float)Math.Round(sub + tax, 2);
+                newOrder.Subtotal = sub;
+                newOrder.Tax = tax;
+                newOrder.Total = total;
 
-                foreach (var pizza in value.Pizza)
+                foreach (var side in value.Sides)
+                {
+                    SideOrder newSideOrder = new SideOrder { Order = newOrder, SideId = side.SideId, Qty = side.Qty };
+                    await _context.SideOrders.AddAsync(newSideOrder);
+                }
+
+
+                foreach (var pizza in value.Pizzas)
                 {
                     //피자 생성
-                    Entities.Pizza newPizza = new Entities.Pizza { Order = newOrder, TypeId = pizza.TypeId, SizeId = pizza.SizeId };
+                    Entities.Pizza newPizza = new Entities.Pizza { Order = newOrder, TypeId = pizza.TypeId, SizeId = pizza.SizeId, Qty = pizza.Qty };
+                    await _context.Pizzas.AddAsync(newPizza);
                     //피자에 토핑연결
                     foreach (var topping in pizza.Toppings)
                     {
@@ -167,7 +198,7 @@ namespace Pizza.Controllers
                 }
 
                 //진행상황
-                OrderProcess newOrderProcess = new OrderProcess { Order = newOrder, ProcessId = 1 };
+                OrderProcess newOrderProcess = new OrderProcess { Order = newOrder, ProcessId = _context.Processes.Where(p => p.ProcessNum == 1).FirstOrDefault().ProcessId };
                 var ret = await _context.OrderProcess.AddAsync(newOrderProcess);
                 await _context.SaveChangesAsync();
 
@@ -175,15 +206,16 @@ namespace Pizza.Controllers
 
                 await transaction.CommitAsync();
             }
-            catch(DbUpdateException updateEx)
+            catch (DbUpdateException updateEx)
             {
                 return StatusCode(500, "Internal server error");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, "Internal server error");
             }
-
+            newOrder.Pizzas = _context.Pizzas.Where(o => o.OrderId == newOrder.OrderId).ToList();
+            newOrder.SideOrders = _context.SideOrders.Where(o => o.OrderId == newOrder.OrderId).ToList();
             return new JsonResult(newOrder);
         }
 
@@ -231,5 +263,6 @@ namespace Pizza.Controllers
             }
             return toppings;
         }
+
     }
 }

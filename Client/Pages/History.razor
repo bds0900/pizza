@@ -1,0 +1,51 @@
+﻿@page "/history"
+@using Client.Components
+@attribute [Authorize]
+<h3>Order History</h3>
+
+
+@if (Orders != null)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-1">#</div>
+            <div class="col-md-4">Date</div>
+            <div class="col-md-1">Subtotal</div>
+            <div class="col-md-1">Tax</div>
+            <div class="col-md-1">Total</div>
+        </div>
+        @foreach (var (order, index) in Orders.OrderByDescending(s => s.Created).Select((order, index) => (order, index)))
+        {
+            @*<OrderDetail Order="order" />*@
+            <div class="row">
+                <div class="col-md-1">
+                    @(index+1)
+                </div>
+                <div class="col-md-4">
+                    @order.Created
+                </div>
+                <div class="col-md-1">
+                    $@order.Subtotal
+                </div>
+                <div class="col-md-1">
+                    $@order.Tax
+                </div>
+                <div class="col-md-1">
+                    $@order.Total
+                </div>
+
+                <button type="button" @onclick="((e)=>HandleChange(order.Created,e))">detail</button>
+            </div>
+
+            <div class="@(order.Created==collapse?null:"collapse")">
+                <OrderDetail OrderId="order.OrderId"></OrderDetail>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div>Loading...</div>
+
+}
+

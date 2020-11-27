@@ -66,7 +66,7 @@ namespace IdentityServer
                 options.EmitStaticAudienceClaim = true;
             })
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddConfigurationStore(options =>//configuration in Configuration.cs file client, api, identity etc
+                /*.AddConfigurationStore(options =>//configuration in Configuration.cs file client, api, identity etc
                 {
                     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
                         sql => sql.MigrationsAssembly(migrationsAssembly));
@@ -75,7 +75,10 @@ namespace IdentityServer
                 {
                     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
                         sql => sql.MigrationsAssembly(migrationsAssembly));
-                })
+                })*/
+                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                .AddInMemoryApiScopes(Configuration.ApiScopes)
+                .AddInMemoryClients(Configuration.GetClients())
                 .AddDeveloperSigningCredential();
 
 

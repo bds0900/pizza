@@ -10,7 +10,7 @@ using Pizza;
 namespace Pizza.Migrations
 {
     [DbContext(typeof(PizzaDbContext))]
-    [Migration("20201119154712_PizzaDbMigration")]
+    [Migration("20201120214845_PizzaDbMigration")]
     partial class PizzaDbMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,6 +60,15 @@ namespace Pizza.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<float>("Subtotal")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Tax")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Total")
+                        .HasColumnType("real");
+
                     b.HasKey("OrderId");
 
                     b.HasIndex("CustomerId");
@@ -91,6 +100,9 @@ namespace Pizza.Migrations
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
 
                     b.Property<int>("SizeId")
                         .HasColumnType("int");
@@ -130,6 +142,9 @@ namespace Pizza.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ProcessNum")
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
@@ -171,11 +186,14 @@ namespace Pizza.Migrations
                     b.Property<int>("SideId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Qty")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderId", "SideId");
 
                     b.HasIndex("SideId");
 
-                    b.ToTable("SideOrder");
+                    b.ToTable("SideOrders");
                 });
 
             modelBuilder.Entity("Entities.Size", b =>

@@ -11,6 +11,7 @@ namespace Pizza
     public class InputModel
     {
         public Customer Customer { set; get; }
-        public List<PizzaInfo> Pizza { set; get; }
+        public List<PizzaInfo> Pizzas { set; get; }
+        public List<SideInfo> Sides { get; set; }
     }
 }

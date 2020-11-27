@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace Pizza
 {
@@ -34,7 +35,7 @@ namespace Pizza
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", config =>
                 {
-                    config.Authority = "https://localhost:44301";
+                    config.Authority = "https://localhost:44310";
                     config.Audience = "ApiOne";
                 });
             services.AddDbContext<PizzaDbContext>(config =>
@@ -64,13 +65,13 @@ namespace Pizza
 
             app.UseRouting();
 
-            app.UseCors();
+            //app.UseCors();
 
-            //app.UseCors(builder => builder
-            //            .AllowAnyOrigin()
-            //            .AllowAnyMethod()
-            //            .AllowAnyHeader()
-            //            .AllowCredentials());
+            app.UseCors(builder => builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        );
 
             app.UseAuthentication();
 
