@@ -20,13 +20,14 @@ namespace Client.Services
         public PizzaService(IHttpClientFactory clientFactory, TokenProvider tokenProvider)
         {
             http = clientFactory.CreateClient();
+            http.BaseAddress = new Uri("https://10.5.0.6");
             this.tokenProvider = tokenProvider;
         }
 
         public async Task<List<Process>> GetProcessAsync(Guid id)
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"https://localhost:44355/api/pizza/track/{id}");
+                $"/api/pizza/track/{id}");
             var response = await http.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -36,7 +37,7 @@ namespace Client.Services
         public async Task<List<Side>> GetSideAsync()
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "https://localhost:44355/api/pizza/sides");
+                "/api/pizza/sides");
             var response = await http.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -46,7 +47,7 @@ namespace Client.Services
         public async Task<PizzaInfo> GetPizzaInfoAsync()
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "https://localhost:44355/api/pizza/");
+                "/api/pizza");
             var response = await http.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
@@ -57,7 +58,7 @@ namespace Client.Services
         {
 
             var requst = new HttpRequestMessage(HttpMethod.Get,
-                $"https://localhost:44355/api/pizza/Customers/{customerId}/Orders");
+                $"/api/pizza/Customers/{customerId}/Orders");
             var response = await http.SendAsync(requst);
             response.EnsureSuccessStatusCode();
 
@@ -67,7 +68,7 @@ namespace Client.Services
         {
 
             var requst = new HttpRequestMessage(HttpMethod.Get,
-                $"https://localhost:44355/api/pizza/Orders/{orderId}");
+                $"/api/pizza/Orders/{orderId}");
             var response = await http.SendAsync(requst);
             response.EnsureSuccessStatusCode();
             
@@ -78,13 +79,12 @@ namespace Client.Services
 
         public async Task<Order> PostCheckOutAsync(object item)
         {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders
+            http.DefaultRequestHeaders
                     .Accept
                     .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
                                                                                   //client.DefaultRequestHeaders.Add("Cookie", AuthCookie);
-            client.DefaultRequestHeaders.Add("X-Requested-With", "X");
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:44355/api/pizza")
+            http.DefaultRequestHeaders.Add("X-Requested-With", "X");
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/api/pizza")
             {
                 Content = new StringContent(JsonSerializer.Serialize(item), Encoding.UTF8, "application/json")
             };
@@ -92,7 +92,7 @@ namespace Client.Services
             try
             {
                 //Failing on this Line.
-                var response = await client.SendAsync(request);
+                var response = await http.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 return  await response.Content.ReadAsAsync<Order>();
                     
@@ -107,7 +107,7 @@ namespace Client.Services
         public async void Sync(Guid tmepId, Guid userId)
         {
             var requst = new HttpRequestMessage(HttpMethod.Post,
-                            $"https://localhost:44355/api/pizza/Sync/{tmepId}/{userId}");
+                            $"/api/pizza/Sync/{tmepId}/{userId}");
             var response = await http.SendAsync(requst);
             response.EnsureSuccessStatusCode();
         }
