@@ -11,10 +11,11 @@ namespace Client.Pages
         private PizzaInfo PizzaInfo { get; set; }
         [Inject]
         StateContainer StateContainer { get; set; }
-
+        [Inject]
+        PizzaService pizzaService { get; set; }
         protected async override Task OnInitializedAsync()
         {
-            PizzaInfo = StateContainer.PizzaInfo;
+            PizzaInfo = await pizzaService.GetPizzaInfoAsync();
             StateContainer.OnChange += StateHasChanged;
         }
         public void Dispose()

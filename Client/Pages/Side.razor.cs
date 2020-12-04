@@ -11,9 +11,11 @@ namespace Client.Pages
 
         [Inject]
         StateContainer StateContainer { get; set; }
+        [Inject]
+        PizzaService pizzaService { get; set; }
         protected async override Task OnInitializedAsync()
         {
-            Sides = StateContainer.Sides;
+            Sides = await pizzaService.GetSideAsync();
 
             StateContainer.OnChange += StateHasChanged;
         }
