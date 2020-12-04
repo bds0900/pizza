@@ -1,12 +1,12 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Pizza
 {
     public class SeedData
@@ -18,7 +18,10 @@ namespace Pizza
             services.AddLogging();
 
 
-            services.AddDbContext<PizzaDbContext>(options =>options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName)));
+            services.AddDbContext<PizzaDbContext>(options =>
+                    //options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName))
+                    options.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName))
+            );
 
 
             using (var serviceProvider = services.BuildServiceProvider())
@@ -27,21 +30,23 @@ namespace Pizza
                 {
 
                     // ApplicationDbContext
-                    using(var PizzaDbContext = scope.ServiceProvider.GetService<PizzaDbContext>())
+                    using (var PizzaDbContext = scope.ServiceProvider.GetService<PizzaDbContext>())
                     {
                         //PizzaDbContext.Database.EnsureCreated();
-                        PizzaDbContext.Database.Migrate();
+                        Log.Information("Context is not founded in database");
+                        Log.Information("strt migration");
 
+                        PizzaDbContext.Database.Migrate();
                         EnsureSeedData(PizzaDbContext);
                     }
-                    
-                    
+
+
                 }
             }
         }
         private static void EnsureSeedData(PizzaDbContext context)
         {
-            
+
             context.Sizes.AddRange(new Size[] {
                 new Size{SizeName="Small",SizePrice=4.99f},
                 new Size{SizeName="Medium",SizePrice=5.99f},
@@ -68,7 +73,7 @@ namespace Pizza
             });
 
             context.Customers.AddRange(new Customer[]{
-                new Customer { FirstName="Doosan",LastName="Beak"}
+                new Customer { FirstName="Doosan",LastName="Beak",Email="bds@gmail.com",PhoneNumber="222-333-4444"}
             });
             context.Toppings.AddRange(new Topping[]{
                 new Topping{ToppingName="Cheese",ToppingPrice=2},
@@ -109,7 +114,7 @@ namespace Pizza
                 new Process{ Status="Shipped",ProcessNum=4},
                 new Process{ Status="Received",ProcessNum=5},
             });
-            context.SaveChanges(); 
+            context.SaveChanges();
             /*
             if (!context.Clients.Any())
             {

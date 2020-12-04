@@ -16,25 +16,36 @@ using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4;
 using IdentityServer.Models;
+using IdentityServerHost.Quickstart.UI;
 
 namespace IdentityServer
 {
     public class Startup
     {
         private readonly IConfiguration _configuration;
-
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _currentEnvironment;
+        public Startup(IConfiguration configuration, IWebHostEnvironment appEnv)
         {
             _configuration = configuration;
+            _currentEnvironment = appEnv;
         }
         public void ConfigureServices(IServiceCollection services)
         {
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            string connectionString = "";
+            if (_currentEnvironment.IsDevelopment())
+            {
+                connectionString = _configuration.GetConnectionString("DefaultConnection");
+            }
+            else
+            {
+                connectionString = ConnectionUri.Convert(Environment.GetEnvironmentVariable("DATABASE_URL"));
+            }
 
             services.AddDbContext<ApplicationDbContext>(config =>
             {
-                config.UseSqlServer(connectionString);
+                //config.UseSqlServer(connectionString);
+                config.UseNpgsql(connectionString);
             });
             // register repositories(collection of fuctions, interfaces that abstracts your calls to the database)
             services.AddIdentity<ApplicationUser, IdentityRole>(config =>
@@ -75,6 +86,7 @@ namespace IdentityServer
                 {
                     options.ConfigureDbContext = b => b.UseSqlServer(connectionString,
                         sql => sql.MigrationsAssembly(migrationsAssembly));
+                .AddTestUsers(TestUsers.Users)
                 })*/
                 .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
                 .AddInMemoryApiScopes(Configuration.ApiScopes)
@@ -105,6 +117,11 @@ namespace IdentityServer
                 app.UseDeveloperExceptionPage();
             }
             app.UseStaticFiles();
+            app.Use((context, next) =>
+            {
+                context.Request.Scheme = "https";
+                return next();
+            });
             app.UseRouting();
             app.UseIdentityServer();
             app.UseAuthorization();

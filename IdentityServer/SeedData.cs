@@ -25,30 +25,12 @@ namespace IdentityServer
 
             services.AddLogging();
 
-
-        #region Identity with EF
             services.AddDbContext<ApplicationDbContext>(options =>
-               options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName)));
-
+               //options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName)));
+               options.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName)));
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-        #endregion
-
-
-
-        #region IdentityServer with EF
-            services.AddOperationalDbContext(options =>
-            {
-                options.ConfigureDbContext = db => db.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName));
-            });
-            services.AddConfigurationDbContext(options =>
-            {
-                options.ConfigureDbContext = db => db.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(SeedData).Assembly.FullName));
-            });
-        #endregion
-
-
 
 
             using (var serviceProvider = services.BuildServiceProvider())
@@ -56,8 +38,6 @@ namespace IdentityServer
                 using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 {
 
-                // ApplicationDbContext
-                #region Add Mock Users
                     var ApplicationDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                     ApplicationDbContext.Database.Migrate();
 
@@ -128,64 +108,10 @@ namespace IdentityServer
                     {
                         Log.Debug("bob already exists");
                     }
-                #endregion
-
-
-                // PersistedGrantDbContext & ConfigurationDbContext
-                #region 
-                    scope.ServiceProvider.GetService<PersistedGrantDbContext>().Database.Migrate();
-
-                    var configDbContext = scope.ServiceProvider.GetService<ConfigurationDbContext>();
-                    configDbContext.Database.Migrate();
-                    EnsureSeedData(configDbContext);
-                #endregion
                 }
             }
         }
 
-        private static void EnsureSeedData(ConfigurationDbContext context)
-        {
-            if (!context.Clients.Any())
-            {
-                Log.Debug("Clients being populated");
-                foreach (var client in Configuration.GetClients().ToList())
-                {
-                    context.Clients.Add(client.ToEntity());
-                }
-                context.SaveChanges();
-            }
-            else
-            {
-                Log.Debug("Clients already populated");
-            }
-
-            if (!context.IdentityResources.Any())
-            {
-                Log.Debug("IdentityResources being populated");
-                foreach (var resource in Configuration.GetIdentityResources().ToList())
-                {
-                    context.IdentityResources.Add(resource.ToEntity());
-                }
-                context.SaveChanges();
-            }
-            else
-            {
-                Log.Debug("IdentityResources already populated");
-            }
-
-            if (!context.ApiResources.Any())
-            {
-                Log.Debug("ApiScopes being populated");
-                foreach (var resource in Configuration.ApiScopes.ToList())
-                {
-                    context.ApiScopes.Add(resource.ToEntity());
-                }
-                context.SaveChanges();
-            }
-            else
-            {
-                Log.Debug("ApiScopes already populated");
-            }
-        }
+        
     }
 }

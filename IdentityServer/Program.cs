@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityServer.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +39,7 @@ namespace IdentityServer
 
             try
             {
+
                 var seed = args.Contains("/seed");
                 if (seed)
                 {
@@ -50,7 +52,16 @@ namespace IdentityServer
                 {
                     Log.Information("Seeding database...");
                     var config = host.Services.GetRequiredService<IConfiguration>();
-                    var connectionString = config.GetConnectionString("DefaultConnection");
+                    var env = host.Services.GetRequiredService<IWebHostEnvironment>();
+                    string connectionString = "";
+                    if (env.IsDevelopment())
+                    {
+                        connectionString = config.GetConnectionString("DefaultConnection");
+                    }
+                    else
+                    {
+                        connectionString = ConnectionUri.Convert(Environment.GetEnvironmentVariable("DATABASE_URL"));
+                    }
                     SeedData.EnsureSeedData(connectionString);
                     Log.Information("Done seeding database.");
                     return 0;

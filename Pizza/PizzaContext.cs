@@ -44,7 +44,16 @@ namespace Pizza
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            //optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+
+            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")=="Developement")
+            {
+                optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+            }
+            else
+            {
+                optionsBuilder.UseNpgsql(ConnectionUri.Convert(Environment.GetEnvironmentVariable("DATABASE_URL")));
+            }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,12 +74,12 @@ namespace Pizza
             modelBuilder.Entity<Entities.Pizza>()
                 .Property(b => b.PizzaId)
                 //.ValueGeneratedOnAdd();
-                .HasDefaultValueSql("NEWID()");
+                .HasDefaultValueSql("uuid_generate_v1()");
 
             modelBuilder.Entity<Customer>()
                 .Property(b => b.CustomerId)
                 //.ValueGeneratedOnAdd();
-                .HasDefaultValueSql("NEWID()");
+                .HasDefaultValueSql("uuid_generate_v1()");
 
             modelBuilder.Entity<Size>()
                 .Property(b => b.SizeId)
@@ -130,13 +139,13 @@ namespace Pizza
 
             modelBuilder.Entity<Order>()
                 .Property(b => b.Created)
-                .HasDefaultValueSql("getutcdate()");
+                .HasDefaultValueSql("now()");
 
             // 두개의 one to many로 나눈다
             modelBuilder.Entity<Order>()
                 .Property(b => b.OrderId)
                 //.ValueGeneratedOnAdd();
-                .HasDefaultValueSql("NEWID()");
+                .HasDefaultValueSql("uuid_generate_v1()");
 
             modelBuilder.Entity<Order>()
                 .HasKey(b => b.OrderId);

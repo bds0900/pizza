@@ -1,4 +1,5 @@
 ﻿using Client.Models;
+using Client.Services;
 using Client.Store;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -15,6 +16,8 @@ namespace Client.Pages
     {
         [Inject] 
         StateContainer StateContainer { get; set; }
+        [Inject]
+        PizzaService pizzaService { get; set; }
         [Parameter]
         public string PizzaName { get; set; }
         public PizzaInfo PizzaInfo { get; set; }
@@ -101,20 +104,12 @@ namespace Client.Pages
             PizzaInfo = result.Success ? result.Value : null;
             SelectedSize = PizzaInfo.Size.First(); */
             Qty = 1;
-            HttpClient _client = new HttpClient();
-            //var PizzaInfo = await _client.GetFromJsonAsync<PizzaInfo>("https://localhost:44355/api/pizza");
-            var response = await _client.GetAsync("https://localhost:44355/api/pizza");
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            var products = JsonSerializer.Deserialize<PizzaInfo>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            PizzaInfo = products;
+            var pizzaInfo = await pizzaService.GetPizzaInfoAsync();
+            StateContainer.SetPizzaInfo(pizzaInfo);
+            PizzaInfo = StateContainer.PizzaInfo;
             SelectedSize = PizzaInfo.Size.First();
             UpdatePrice();
-
+            
             StateContainer.OnChange += StateHasChanged;
         }
 

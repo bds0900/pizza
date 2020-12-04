@@ -12,17 +12,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 
 namespace Pizza
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment appEnv)
         {
             Configuration = configuration;
+            _currentEnvironment = appEnv;
         }
 
         public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _currentEnvironment;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -31,24 +34,26 @@ namespace Pizza
                     .AddNewtonsoftJson(options =>
                               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                      );
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            string connectionString="";
+            if (_currentEnvironment.IsDevelopment())
+            {
+                connectionString = Configuration.GetConnectionString("DefaultConnection");
+            }
+            else
+            {
+                connectionString = ConnectionUri.Convert(Environment.GetEnvironmentVariable("DATABASE_URL"));
+            }
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", config =>
                 {
-                    config.Authority = "https://localhost:44310";
-                    config.Audience = "ApiOne";
+                    config.Authority = Configuration.GetValue<string>("JwtBearer:Authority");
+                    config.Audience = Configuration.GetValue<string>("JwtBearer:Audience"); 
                 });
             services.AddDbContext<PizzaDbContext>(config =>
             {
-                config.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(Startup).Assembly.FullName));
-            });
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
-                                  });
+                //config.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(Startup).Assembly.FullName));
+                config.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(typeof(Startup).Assembly.FullName));
+                
             });
             services.AddControllers();
         }
@@ -61,11 +66,11 @@ namespace Pizza
                 app.UseDeveloperExceptionPage();
             }
 
+            //https://stackoverflow.com/questions/56562956/connection-refused-on-api-request-between-containers-with-docker-compose
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            //app.UseCors();
 
             app.UseCors(builder => builder
                         .AllowAnyOrigin()

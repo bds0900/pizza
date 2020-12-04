@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,6 +37,16 @@ namespace Pizza
 
             try
             {
+
+                //docker compose setting
+                /*var host = CreateHostBuilder(args).Build();
+                Log.Information("Seeding database...");
+                var config = host.Services.GetRequiredService<IConfiguration>();
+                var connectionString = config.GetConnectionString("DefaultConnection");
+                //string connectionString = ConnectionUri.Convert(Environment.GetEnvironmentVariable("DATABASE_URL")) ;
+                SeedData.EnsureSeedData(connectionString);
+                Log.Information("Done seeding database.");*/
+
                 var seed = args.Contains("/seed");
                 if (seed)
                 {
@@ -48,7 +59,16 @@ namespace Pizza
                 {
                     Log.Information("Seeding database...");
                     var config = host.Services.GetRequiredService<IConfiguration>();
-                    var connectionString = config.GetConnectionString("DefaultConnection");
+                    var env = host.Services.GetRequiredService<IWebHostEnvironment>();
+                    string connectionString = "";
+                    if (env.IsDevelopment())
+                    {
+                        connectionString = config.GetConnectionString("DefaultConnection");
+                    }
+                    else
+                    {
+                        connectionString = ConnectionUri.Convert(Environment.GetEnvironmentVariable("DATABASE_URL"));
+                    }
                     SeedData.EnsureSeedData(connectionString);
                     Log.Information("Done seeding database.");
                     return 0;

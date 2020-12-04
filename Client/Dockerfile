@@ -7,17 +7,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["IdentityServer.csproj", "IdentityServer/"]
-RUN dotnet restore "IdentityServer/IdentityServer.csproj"
-WORKDIR "/src/IdentityServer"
+COPY ["Client/Client.csproj", "Client/"]
+COPY ["Entities/Entities.csproj", "Entities/"]
+RUN dotnet restore "Client/Client.csproj"
 COPY . .
-RUN dotnet build "IdentityServer.csproj" -c Release -o /app/build
+WORKDIR "/src/Client"
+RUN dotnet build "Client.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "IdentityServer.csproj" -c Release -o /app/publish
+RUN dotnet publish "Client.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-#ENTRYPOINT ["dotnet", "IdentityServer.dll"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet IdentityServer.dll
+ENTRYPOINT ["dotnet", "Client.dll"]

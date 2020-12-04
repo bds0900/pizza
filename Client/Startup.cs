@@ -42,7 +42,7 @@ namespace Client
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddOpenIdConnect("oidc", config =>
                 {
-                    config.Authority = "https://localhost:44310/";                    
+                    config.Authority = "https://identity-test-server.herokuapp.com";                    
                     config.ClientId = "client_id_mvc";
 
                     config.ClientSecret = "client_secret_mvc";
@@ -101,12 +101,16 @@ namespace Client
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.Use((context, next) =>
+            {
+                context.Request.Scheme = "https";
+                return next();
+            });
             app.UseRouting();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
-            
 
             app.UseEndpoints(endpoints =>
             {

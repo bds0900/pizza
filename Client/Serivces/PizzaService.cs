@@ -9,6 +9,7 @@ using Client.Models;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace Client.Services
 {
@@ -17,62 +18,108 @@ namespace Client.Services
     {
         private readonly HttpClient http;
         private readonly TokenProvider tokenProvider;
-        public PizzaService(IHttpClientFactory clientFactory, TokenProvider tokenProvider)
+        public PizzaService(IHttpClientFactory clientFactory, TokenProvider tokenProvider, IConfiguration config)
         {
             http = clientFactory.CreateClient();
-            http.BaseAddress = new Uri("https://10.5.0.6");
             this.tokenProvider = tokenProvider;
+            //http.BaseAddress = new Uri(config.GetValue<string>("BaseUri"));
+            http.BaseAddress = new Uri(config["BaseUri"]);
         }
 
         public async Task<List<Process>> GetProcessAsync(Guid id)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/pizza/track/{id}");
-            var response = await http.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                                $"/api/pizza/track/{id}");
+                var response = await http.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadAsAsync<List<Process>>();
+            }
+            catch(HttpRequestException ex)
+            {
 
-            return await response.Content.ReadAsAsync<List<Process>>();
+            }
+            return null;
+
+           
         }
 
         public async Task<List<Side>> GetSideAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                "/api/pizza/sides");
-            var response = await http.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                                "/api/pizza/sides");
+                var response = await http.SendAsync(request);
+                response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsAsync<List<Side>>();
+                return await response.Content.ReadAsAsync<List<Side>>();
+            }
+            catch(HttpRequestException ex)
+            {
+
+            }
+            return null;
+            
         }
 
         public async Task<PizzaInfo> GetPizzaInfoAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                "/api/pizza");
-            var response = await http.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                                "/api/pizza");
+                var response = await http.SendAsync(request);
+                response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsAsync<PizzaInfo>();
+                return await response.Content.ReadAsAsync<PizzaInfo>();
+            try
+            {
+            }
+            catch(HttpRequestException ex)
+            {
+
+            }
+            return null;
+            
         }
 
         public async Task<List<Order>> GetOrdersAsync(Guid customerId)
         {
 
-            var requst = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/pizza/Customers/{customerId}/Orders");
-            var response = await http.SendAsync(requst);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                var requst = new HttpRequestMessage(HttpMethod.Get,
+                                $"/api/pizza/Customers/{customerId}/Orders");
+                var response = await http.SendAsync(requst);
+                response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsAsync<List<Order>>();
+                return await response.Content.ReadAsAsync<List<Order>>();
+            }
+            catch(HttpRequestException ex)
+            {
+
+            }
+            return null;
+            
         }
         public async Task<OrderInfo> GetOrderAsync(Guid orderId)
         {
 
-            var requst = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/pizza/Orders/{orderId}");
-            var response = await http.SendAsync(requst);
-            response.EnsureSuccessStatusCode();
-            
-            return await response.Content.ReadAsAsync<OrderInfo>();
+            try
+            {
+                var requst = new HttpRequestMessage(HttpMethod.Get,
+                    $"/api/pizza/Orders/{orderId}");
+                var response = await http.SendAsync(requst);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsAsync<OrderInfo>();
+            }
+            catch(HttpRequestException ex)
+            {
+
+            }
+            return null;
+
         }
 
 
@@ -103,13 +150,6 @@ namespace Client.Services
             }
 
             return null;
-        }
-        public async void Sync(Guid tmepId, Guid userId)
-        {
-            var requst = new HttpRequestMessage(HttpMethod.Post,
-                            $"/api/pizza/Sync/{tmepId}/{userId}");
-            var response = await http.SendAsync(requst);
-            response.EnsureSuccessStatusCode();
         }
 
         public string GetIdToken()

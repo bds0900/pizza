@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Pizza.Migrations
 {
@@ -11,11 +12,11 @@ namespace Pizza.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    CustomerId = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()"),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true)
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v1()"),
+                    FirstName = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,10 +27,10 @@ namespace Pizza.Migrations
                 name: "Processes",
                 columns: table => new
                 {
-                    ProcessId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(nullable: true),
-                    ProcessNum = table.Column<int>(nullable: false)
+                    ProcessId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Status = table.Column<string>(type: "text", nullable: true),
+                    ProcessNum = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -40,12 +41,12 @@ namespace Pizza.Migrations
                 name: "Sides",
                 columns: table => new
                 {
-                    SideId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SideName = table.Column<string>(nullable: true),
-                    SidePrice = table.Column<float>(nullable: false),
-                    Image = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true)
+                    SideId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SideName = table.Column<string>(type: "text", nullable: true),
+                    SidePrice = table.Column<float>(type: "real", nullable: false),
+                    Image = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,10 +57,10 @@ namespace Pizza.Migrations
                 name: "Sizes",
                 columns: table => new
                 {
-                    SizeId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SizeName = table.Column<string>(nullable: true),
-                    SizePrice = table.Column<float>(nullable: false)
+                    SizeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SizeName = table.Column<string>(type: "text", nullable: true),
+                    SizePrice = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,10 +71,10 @@ namespace Pizza.Migrations
                 name: "Toppings",
                 columns: table => new
                 {
-                    ToppingId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ToppingName = table.Column<string>(nullable: true),
-                    ToppingPrice = table.Column<float>(nullable: false)
+                    ToppingId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ToppingName = table.Column<string>(type: "text", nullable: true),
+                    ToppingPrice = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,11 +85,11 @@ namespace Pizza.Migrations
                 name: "Types",
                 columns: table => new
                 {
-                    TypeId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TypeName = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    Image = table.Column<string>(nullable: true)
+                    TypeId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TypeName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Image = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -99,12 +100,12 @@ namespace Pizza.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()"),
-                    Created = table.Column<DateTime>(nullable: false, defaultValueSql: "getdate()"),
-                    CustomerId = table.Column<Guid>(nullable: false),
-                    Subtotal = table.Column<float>(nullable: false),
-                    Tax = table.Column<float>(nullable: false),
-                    Total = table.Column<float>(nullable: false)
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v1()"),
+                    Created = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValueSql: "now()"),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Subtotal = table.Column<float>(type: "real", nullable: false),
+                    Tax = table.Column<float>(type: "real", nullable: false),
+                    Total = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,8 +122,8 @@ namespace Pizza.Migrations
                 name: "OrderProcess",
                 columns: table => new
                 {
-                    OrderId = table.Column<Guid>(nullable: false),
-                    ProcessId = table.Column<int>(nullable: false)
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProcessId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,11 +146,11 @@ namespace Pizza.Migrations
                 name: "Pizzas",
                 columns: table => new
                 {
-                    PizzaId = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()"),
-                    TypeId = table.Column<int>(nullable: false),
-                    SizeId = table.Column<int>(nullable: false),
-                    Qty = table.Column<int>(nullable: false),
-                    OrderId = table.Column<Guid>(nullable: false)
+                    PizzaId = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v1()"),
+                    TypeId = table.Column<int>(type: "integer", nullable: false),
+                    SizeId = table.Column<int>(type: "integer", nullable: false),
+                    Qty = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,9 +179,9 @@ namespace Pizza.Migrations
                 name: "SideOrders",
                 columns: table => new
                 {
-                    SideId = table.Column<int>(nullable: false),
-                    OrderId = table.Column<Guid>(nullable: false),
-                    Qty = table.Column<int>(nullable: false)
+                    SideId = table.Column<int>(type: "integer", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Qty = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -203,8 +204,8 @@ namespace Pizza.Migrations
                 name: "PizzaToppings",
                 columns: table => new
                 {
-                    PizzaId = table.Column<Guid>(nullable: false),
-                    ToppingId = table.Column<int>(nullable: false)
+                    PizzaId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ToppingId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

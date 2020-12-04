@@ -58,7 +58,7 @@ namespace IdentityServer
                         "rc.scope",//identity resource
                         
                     },
-                    RedirectUris={"https://localhost:44316/signin-oidc" },
+                    RedirectUris={"https://blazor-test-client.herokuapp.com/signin-oidc" },
                     RequireConsent=false,//consent page가 안뜨게 한다. 이러이러한 권한을 수락하시겠습니까? 하고 물어보는 페이지
 
                     AlwaysIncludeUserClaimsInIdToken=true,
