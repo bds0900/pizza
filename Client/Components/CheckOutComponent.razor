@@ -15,30 +15,32 @@ else
 
             <DataAnnotationsValidator></DataAnnotationsValidator>
             <ValidationSummary></ValidationSummary>
+            <div class="d-flex flex-column align-items-center">
+                <div class="w-50">
+                    <div class="form-group row ">
+                        <label for="FirstName" class="col-sm-2 col-form-label">First Name</label>
+                        <InputText class="form-control col-sm-10" id="FirstName" @bind-Value="StateContainer.Customer.FirstName" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="LastName" class="col-sm-2 col-form-label">Last Name</label>
+                        <InputText class="form-control col-sm-10" id="LastName" @bind-Value="StateContainer.Customer.LastName" />
+                    </div>
 
-            <div class="form-group row ">
-                <label for="FirstName" class="col-sm-2 col-form-label">First Name</label>
-                <InputText class="form-control col-sm-10" id="FirstName" @bind-Value="StateContainer.Customer.FirstName" />
+                    <div class="form-group row">
+                        <lable for="PhoneNumber" class="col-sm-2 col-form-label">Phone Numer</lable>
+                        <InputText class="form-control col-sm-10" id="PhoneNumber" @bind-Value="StateContainer.Customer.PhoneNumber" />
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="Email" class="col-sm-2 col-form-label"> Email</label>
+                        <InputText class="form-control col-sm-10" id="Email" @bind-Value="StateContainer.Customer.Email" />
+                    </div>
+
+
+
+                    <input type="submit" class="btn btn-primary" value="Checkout" />
+                </div>
             </div>
-            <div class="form-group row">
-                <label for="LastName" class="col-sm-2 col-form-label">Last Name</label>
-                <InputText class="form-control col-sm-10" id="LastName" @bind-Value="StateContainer.Customer.LastName" />
-            </div>
-
-            <div class="form-group row">
-                <lable for="PhoneNumber" class="col-sm-2 col-form-label">Phone Numer</lable>
-                <InputText class="form-control col-sm-10" id="PhoneNumber" @bind-Value="StateContainer.Customer.PhoneNumber" />
-            </div>
-
-            <div class="form-group row">
-                <label for="Email" class="col-sm-2 col-form-label"> Email</label>
-                <InputText class="form-control col-sm-10" id="Email" @bind-Value="StateContainer.Customer.Email" />
-            </div>
-
-
-
-            <input type="submit" class="btn btn-primary" value="Checkout" />
-
         </EditForm>
     </div>
 }
