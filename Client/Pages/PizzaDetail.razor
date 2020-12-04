@@ -23,7 +23,7 @@ else if(StateContainer.PizzaInfo.Type.Select(t=>t.TypeName).Contains(PizzaName))
                 <div class="container">
                     <div class="d-flex justify-content-around">
                         <div class="btn-group-toggle" data-toggle="buttons">
-                            @foreach (var size in PizzaInfo.Size)
+                            @foreach (var size in PizzaInfo.Size.OrderBy(s => s.SizePrice))
                             {
                                 <label class="btn btn-outline-primary @((SelectedSize.SizeId==size.SizeId)?"active":"")">
                                     <input type="radio" class="btn btn-outline-success" checked @bind="size.SizeId" @onclick="((e)=>SelectionChanged(size))">
