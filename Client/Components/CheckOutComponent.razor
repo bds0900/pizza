@@ -8,7 +8,7 @@ else
 {
 
 
-    <EditForm Model="StateContainer.Customer" OnInvalidSubmit="CheckOut">
+    <EditForm Model="@StateContainer.Customer" OnValidSubmit="@CheckOut">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <ValidationSummary></ValidationSummary>
         <div class="d-flex flex-column">
@@ -52,7 +52,7 @@ else
             </div>
 
         </div>
-        <input type="submit" class="btn btn-primary" @onclick="CheckOut" value="Checkout" />
+        <input type="submit" class="btn btn-primary" value="Checkout" />
 
     </EditForm>
 
