@@ -12,7 +12,7 @@ else if(StateContainer.PizzaInfo.Type.Select(t=>t.TypeName).Contains(PizzaName))
     <div class="container">
         <div class="row ">
             <div class="col-sm-1 col-lg-6">
-                <img class="img-fluid h-75" src="@PizzaInfo.Type.Where(t=>t.TypeName==PizzaName).FirstOrDefault().Image" />
+                <img class="img-fluid h-75 rounded shadow-lg" src="@PizzaInfo.Type.Where(t=>t.TypeName==PizzaName).FirstOrDefault().Image" />
             </div>
 
 
