@@ -1,5 +1,5 @@
 # Project
-Ordering pizza and sied dishes at a fake pizza shop 
+Ordering pizza and side dishes at a fake pizza shop 
 
 # Motivation
 I have studied backend, frontend, and sql so far, but I have not had any experience in releasing a product by integrating these. Through this project, although incomplete, I wanted to gain experience in making products.  
