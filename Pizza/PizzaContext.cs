@@ -46,7 +46,7 @@ namespace Pizza
                 .Build();
             //optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
 
-            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")=="Developement")
+            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")=="Development")
             {
                 optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             }

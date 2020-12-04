@@ -1,39 +1,11 @@
 ﻿@page "/"
 @using Client.Services;
 @using IdentityModel;
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="container-fluid">
+    <div class="display-4 text-center">
+        Welcome to fake pizza shop
+    </div>
+    <img src="https://cdn.pixabay.com/photo/2016/06/08/00/03/pizza-1442946_1280.jpg" />
+</div>
 @code{
-@*    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
-    [Inject]
-    StateContainer StateContainer { get; set; }
-    [Inject]
-    PizzaService pizzaService { get; set; }
-    protected async override Task OnInitializedAsync()
-    {
-        var state=await authenticationStateTask;
-        if(state.User.Identity.IsAuthenticated)
-        {
-            var claims = state.User.Claims;
-            pizzaService.Sync(StateContainer.Customer.CustomerId, new Guid(claims.Where(t => t.Type == JwtClaimTypes.Subject).Select(t => t.Value).FirstOrDefault()));
-            StateContainer.Customer = new Customer
-            {
-                CustomerId = new Guid(claims.Where(t => t.Type == JwtClaimTypes.Subject).Select(t => t.Value).FirstOrDefault()),
-                FirstName = claims.Where(t => t.Type == JwtClaimTypes.GivenName).Select(t => t.Value).FirstOrDefault(),
-                LastName = claims.Where(t => t.Type == JwtClaimTypes.FamilyName).Select(t => t.Value).FirstOrDefault(),
-                Email = claims.Where(t => t.Type == JwtClaimTypes.Email).Select(t => t.Value).FirstOrDefault(),
-                PhoneNumber = claims.Where(t => t.Type == JwtClaimTypes.PhoneNumber).Select(t => t.Value).FirstOrDefault()
-            };
-        }
-
-        StateContainer.OnChange += StateHasChanged;
-    }
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
-    }*@
 }

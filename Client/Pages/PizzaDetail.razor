@@ -9,20 +9,18 @@
 }
 else if(StateContainer.PizzaInfo.Type.Select(t=>t.TypeName).Contains(PizzaName))
 {
-    <div class="container-fluid">
+    <div class="container">
         <div class="row ">
-            <div class="col-6">
-                <img class="img-fluid" src="@PizzaInfo.Type.Where(t=>t.TypeName==PizzaName).FirstOrDefault().Image" />
+            <div class="col-sm-1 col-lg-6">
+                <img class="img-fluid h-75" src="@PizzaInfo.Type.Where(t=>t.TypeName==PizzaName).FirstOrDefault().Image" />
             </div>
 
 
-            <div class="col-6">
-
+            <div class="col-sm-1 col-lg-6">
                 <p class="h4 text-center">Size</p>
-
                 <div class="container">
                     <div class="d-flex justify-content-around">
-                        <div class="btn-group-toggle" data-toggle="buttons">
+                        <div class="btn-group-toggle btn-group-lg text-center" data-toggle="buttons">
                             @foreach (var size in PizzaInfo.Size.OrderBy(s => s.SizePrice))
                             {
                                 <label class="btn btn-outline-primary @((SelectedSize.SizeId==size.SizeId)?"active":"")">
@@ -36,7 +34,6 @@ else if(StateContainer.PizzaInfo.Type.Select(t=>t.TypeName).Contains(PizzaName))
                     </div>
                 </div>
 
-
                 @if (PizzaName == "Custom")
                 {
                     <br />
@@ -44,8 +41,8 @@ else if(StateContainer.PizzaInfo.Type.Select(t=>t.TypeName).Contains(PizzaName))
                     <div class="container">
                         <div class="d-flex justify-content-around">
 
-                            <div class="btn-group-toggle" data-toggle="buttons">
-                                @foreach (var topping in PizzaInfo.Topping)
+                            <div class="btn-group-toggle  text-center" data-toggle="buttons">
+                                @foreach (var topping in PizzaInfo.Topping.OrderBy(t=>t.ToppingPrice))
                                 {
                                     <label class="btn btn-outline-primary @(SelectedTopping.Contains(topping.ToppingId)?"active":"")">
                                         <input type="checkbox" @bind="topping.ToppingId" @onclick="((e)=>handleClick(topping))" />
@@ -60,7 +57,6 @@ else if(StateContainer.PizzaInfo.Type.Select(t=>t.TypeName).Contains(PizzaName))
 
                     </div>
                 }
-
                 <br />
                 <p class="h5 text-center">Qty</p>
                 <div class="container">

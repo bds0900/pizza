@@ -3,10 +3,15 @@
 
 @if (Sides != null)
 {
-    @foreach (var side in @Sides)
-    {
-        <SideDetailComponent Side="side"/>
-    }
+    <div class="container-fluid">
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+            @foreach (var side in @Sides)
+            {
+                <SideDetailComponent Side="side" />
+            }
+        </div>
+    </div>
 }
 else
 {

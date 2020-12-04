@@ -1,4 +1,7 @@
-﻿<h3>CheckOut</h3>
+﻿<div class="text-center">
+
+    <h3>CheckOut</h3>
+</div>
 
 @if (Result != null)
 {
@@ -7,53 +10,35 @@
 else
 {
 
+    <div class="text-center">
+        <EditForm Model="@StateContainer.Customer" OnValidSubmit="@CheckOut">
 
-    <EditForm Model="@StateContainer.Customer" OnValidSubmit="@CheckOut">
-        <DataAnnotationsValidator></DataAnnotationsValidator>
-        <ValidationSummary></ValidationSummary>
-        <div class="d-flex flex-column">
-            <div class="row">
-                <div class="col-md-2">
-                    First Name
-                </div>
-                <div class="col-md-4">
-                    <InputText @bind-Value="StateContainer.Customer.FirstName" />
-                </div>
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+
+            <div class="form-group row ">
+                <label for="FirstName" class="col-sm-2 col-form-label">First Name</label>
+                <InputText class="form-control col-sm-10" id="FirstName" @bind-Value="StateContainer.Customer.FirstName" />
+            </div>
+            <div class="form-group row">
+                <label for="LastName" class="col-sm-2 col-form-label">Last Name</label>
+                <InputText class="form-control col-sm-10" id="LastName" @bind-Value="StateContainer.Customer.LastName" />
             </div>
 
-            <div class="row">
-                <div class="col-md-2">
-
-                    Last Name
-                </div>
-                <div class="col-md-4">
-                    <InputText @bind-Value="StateContainer.Customer.LastName" />
-                </div>
+            <div class="form-group row">
+                <lable for="PhoneNumber" class="col-sm-2 col-form-label">Phone Numer</lable>
+                <InputText class="form-control col-sm-10" id="PhoneNumber" @bind-Value="StateContainer.Customer.PhoneNumber" />
             </div>
 
-            <div class="row">
-                <div class="col-md-2">
-                    Phone Numer
-                </div>
-                <div class="col-md-4">
-                    <InputText @bind-Value="StateContainer.Customer.PhoneNumber" />
-                </div>
+            <div class="form-group row">
+                <label for="Email" class="col-sm-2 col-form-label"> Email</label>
+                <InputText class="form-control col-sm-10" id="Email" @bind-Value="StateContainer.Customer.Email" />
             </div>
 
-            <div class="row">
-                <div class="col-md-2">
 
-                    Email
-                </div>
-                <div class="col-md-4">
 
-                    <InputText @bind-Value="StateContainer.Customer.Email" />
-                </div>
-            </div>
+            <input type="submit" class="btn btn-primary" value="Checkout" />
 
-        </div>
-        <input type="submit" class="btn btn-primary" value="Checkout" />
-
-    </EditForm>
-
+        </EditForm>
+    </div>
 }
