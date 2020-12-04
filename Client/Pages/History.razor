@@ -22,7 +22,7 @@
                     @(index+1)
                 </div>
                 <div class="col-md-4">
-                    @order.Created.ToLocalTime()
+                    @order.Created.AddHours(7)
                 </div>
                 <div class="col-md-1">
                     $@order.Subtotal
