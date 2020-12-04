@@ -232,37 +232,6 @@ namespace Pizza.Controllers
 
         }
 
-
-        public string[] SearchToppingsByPizzaId(Guid pizzaId)
-        {
-            /*subqueries in the Where clause
-             * 
-             * Select toppingName
-                From Toppings
-                Where Toppings.ToppingId In (Select ToppingId
-                From PizzaToppings
-                Where pizzaId = 1)
-                go
-             */
-            var ret = (from topping in _context.Toppings
-                       where (from pt in _context.PizzaToppings
-                              where pt.PizzaId == pizzaId
-                              select pt.ToppingId).Contains(topping.ToppingId)
-                       select topping.ToppingName).ToArray();
-            return ret;
-        }
-        public Dictionary<Guid, string[]> PizzaToppings(Guid orderId)
-        {
-            Dictionary<Guid, string[]> toppings = new Dictionary<Guid, string[]>();
-            var pizzaIds = (from p in _context.Pizzas
-                            where p.OrderId == orderId
-                            select p.PizzaId).ToList();
-            foreach (var id in pizzaIds)
-            {
-                toppings.Add(id, SearchToppingsByPizzaId(id));
-            }
-            return toppings;
-        }
-
+        
     }
 }
