@@ -24,14 +24,14 @@ And for this project, I used techs I haven't used before. I learned a lot about 
 
 # Features
 
-[Api](https://pizza-test-api.herokuapp.com/api/pizza)
+API
 - Retrive Pizza list
 - Retrive Side dishes list
 - Create order
 - Look up order history
 - Track order
 
-[Client](https://blazor-test-client.herokuapp.com)
+Client
 - Display Pizza info
 - Display Side dish info
 - Add items to cart
@@ -45,34 +45,34 @@ And for this project, I used techs I haven't used before. I learned a lot about 
 ### **api/pizza/type**
 - get pizza type
 >example
->https://pizza-test-api.herokuapp.com/api/pizza/type
+>/api/pizza/type
 
 ### **api/pizza/size**
 - get pizza size
 >example
->https://pizza-test-api.herokuapp.com/api/pizza/size
+>/api/pizza/size
 
 ### **api/pizaz/topping**
 - get pizza toppings
 >example
->https://pizza-test-api.herokuapp.com/api/pizza/topping
+>/api/pizza/topping
 
 ### **api/pizza/sides**
 - get side dishes
 >example
->https://pizza-test-api.herokuapp.com/api/pizza/sides
+>/api/pizza/sides
 
 ### **api/Pizza/Customers/{id}/Orders**
 - get order history by customer id  
 `parameter: Guid`
 >example
->https://pizza-test-api.herokuapp.com/api/pizza/Customers/7d9ecead-eca1-48b2-8366-784fb1c17c16/Orders
+>/api/pizza/Customers/7d9ecead-eca1-48b2-8366-784fb1c17c16/Orders
 
 ### **api/Pizza/Orders/{orderId}**
 - get order detail by orderId  
 `parameter: Guid`
 >example
->https://pizza-test-api.herokuapp.com/api/Pizza/Orders/dc6f9ec8-366f-11eb-8dcc-22000bda0bac
+>/api/Pizza/Orders/dc6f9ec8-366f-11eb-8dcc-22000bda0bac
 
 
 
@@ -80,7 +80,7 @@ And for this project, I used techs I haven't used before. I learned a lot about 
 ### **api/Pizza**
 - create an order
 >example
->https://pizza-test-api.herokuapp.com/api/Pizza
+>/api/Pizza
 
 >body
 ```
